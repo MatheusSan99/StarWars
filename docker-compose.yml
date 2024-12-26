@@ -1,0 +1,17 @@
+services:
+  starwars:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - DB_CONNECTION=${DB_CONNECTION}
+      - DB_DATABASE=${DB_DATABASE}
+      - DEV_ENV=${DEV_ENV}
+    container_name: starwars
+    volumes:
+      - ./:/var/www/html/
+    ports:
+      - "8080:80"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    image: starwars

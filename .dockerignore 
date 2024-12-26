@@ -1,0 +1,6 @@
+# .dockerignore
+.git
+node_modules
+*.log
+*.md
+docker-compose.yml
