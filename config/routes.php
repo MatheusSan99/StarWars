@@ -1,7 +1,13 @@
 <?php
 
-use API\CheckPrice\Controller\{
-    GasStationController,
+use StarWars\Controller\{
+    Movies\MoviesController,
+    UserRegister\NewAccountController,
+    UserRegister\LoginController,
+    UserRegister\LogoutController,
+    Error\Error404Controller,
+    
+
 };
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -15,18 +21,22 @@ return function (App $app) {
 
     $app->get('/', function (ServerRequestInterface $request, ResponseInterface $response) {
         $response = $response->withHeader('Content-Type', 'text/html');
+ 
+        # write php ini on the response
         
-        ob_start(); 
-        phpinfo(); 
-        $phpinfo = ob_get_clean(); 
-        
+        ob_start();
+
+        xdebug_info();
+
+        $phpinfo = ob_get_clean();
+
         $response->getBody()->write($phpinfo);
-        
+
         return $response;
     });
-    
 
-    $app->get('/v1/price/gasoline/{month}/{year}', GasStationController::class . ':checkActualPrice');
+    $app->get('/movies', [MoviesController::class, 'getMovies'])->add(new \StarWars\Middleware\AuthMiddleware());
+    $app->get('/login', [LoginController::class, 'login']);
 
     $app->map(['GET', 'POST', 'PUT', 'DELETE', 'PATCH'], '/{routes:.+}', function () use ($app) {
         $responseFactory = new ResponseFactory();

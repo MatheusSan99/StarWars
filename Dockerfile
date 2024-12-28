@@ -1,48 +1,72 @@
-# Estágio para PHP 7.4 com Xdebug
-FROM php:7.4-cli-alpine AS php74
+ARG PHP_VERSION=7.4.33
+ARG COMPOSER_VERSION=2.8.3
 
-# Instalar dependências necessárias
+# Estágio 1: Build
+FROM php:${PHP_VERSION}-cli-alpine AS builder
+
+RUN apk add --no-cache --virtual .build-deps \
+    bash \
+    gcc \
+    g++ \
+    make \
+    autoconf \
+    zlib-dev \
+    bzip2-dev \
+    libsodium-dev \
+    libxml2-dev \
+    libxslt-dev \
+    yaml-dev \
+    sqlite-dev && \
+    docker-php-ext-install \
+    bz2 \
+    calendar \
+    exif \
+    opcache \
+    pcntl \
+    shmop \
+    soap \
+    sockets \
+    sodium \
+    sysvsem \
+    sysvshm \
+    xsl \
+    pdo_sqlite && \
+    pecl install yaml && docker-php-ext-enable yaml && \
+    apk del .build-deps
+
+# Estágio 2: Composer
+FROM composer:${COMPOSER_VERSION} AS composer-stage
+
+# Estágio 3: Final 
+FROM php:${PHP_VERSION}-cli-alpine
+
+# Instalar dependências runtime necessárias
 RUN apk add --no-cache \
     bash \
-    bzip2-dev libsodium-dev libxml2-dev libxslt-dev \
-    linux-headers yaml-dev sqlite-dev \
-    gcc make g++ zlib-dev autoconf nginx \
-    openssl expect curl && \
-    docker-php-ext-install \
-    bz2 calendar exif opcache pcntl shmop soap \
-    sockets sodium sysvsem sysvshm xsl pdo_sqlite
+    libxslt \
+    libxml2 \
+    libsodium \
+    yaml \
+    sqlite \
+    bzip2-dev 
 
-# Instalar o GNU iconv no PHP
 RUN apk add gnu-libiconv
-ENV LD_PRELOAD="/usr/lib/preloadable_libiconv.so php-fpm php"
-RUN php -r '$res = iconv("utf-8", "utf-8//IGNORE", "fooą");'
+ENV LD_PRELOAD=/usr/lib/preloadable_libiconv.so
 
-# Instalar o Composer globalmente
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+# Copiar extensões e configurações do estágio builder
+COPY --from=builder /usr/local/lib/php/extensions /usr/local/lib/php/extensions
+COPY --from=builder /usr/local/etc/php/conf.d /usr/local/etc/php/conf.d
 
-# Copiar os arquivos do diretório atual para o container
+COPY --from=composer-stage /usr/bin/composer /usr/bin/composer
+
 COPY . /var/www/html
 
-# Garantir permissões corretas
-RUN chown -R www-data:www-data /var/www/html && chmod -R 775 /var/www/html
+# Permissoes
+# RUN chown -R www-data:www-data /var/www/html && chmod -R 755 /var/www/html
+RUN chmod +x /var/www/html/scripts/setup-php.sh /var/www/html/start.sh
 
-# Permissão scripts    
-RUN chmod +x /var/www/html/scripts/setup-php.sh
-RUN chmod +x /var/www/html/start.sh
-
-# Copiar a configuração do Nginx
-COPY ./nginx/nginx.conf /etc/nginx/conf.d/nginx.conf
-
-# Expor a porta 80 para o Nginx
-EXPOSE 80
-
-# Definir o diretório de trabalho
 WORKDIR /var/www/html
 
-# Instalar Dependencias composer
-RUN composer install
-# Atualizar o autoloload
-RUN composer dump-autoload
+EXPOSE 80
 
-# Comando para iniciar o PHP com Nginx
-CMD ["/var/www/html/start.sh"]
+ENTRYPOINT ["/bin/bash", "/var/www/html/start.sh"]
