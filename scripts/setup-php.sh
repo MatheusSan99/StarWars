@@ -9,13 +9,11 @@ PHP_INI_DIR="/var/www/html/php"
 
 echo "Variável DEV_ENV: $DEV_ENV"
 
-# Verifica se o ambiente de desenvolvimento está ativado
 if [ "$DEV_ENV" = "true" ]; then
     echo "Ambiente de desenvolvimento detectado..."
 
-    # Verifica se o Xdebug já está instalado
     if php -m | grep -q xdebug; then
-        echo "Xdebug já está instalado"
+        echo "Xdebug já está instalado, pulando a instalação..."
         exit 0
     fi
 
@@ -29,7 +27,6 @@ if [ "$DEV_ENV" = "true" ]; then
         libxml2-dev \
         libxslt-dev || { echo "Erro ao instalar dependências"; exit 0; }
 
-    # Instala o Xdebug
     echo "Instalando Xdebug 3.1.6..."
     pecl install xdebug-3.1.6 || { echo "Erro ao instalar o Xdebug"; exit 0; }
 
@@ -39,7 +36,6 @@ if [ "$DEV_ENV" = "true" ]; then
         echo "Aviso: docker-php-ext-enable não encontrado. Verifique a configuração manual do Xdebug."
     fi
 
-    # Copia a configuração do PHP para desenvolvimento
     cp "$PHP_INI_DIR/php.ini-development" /usr/local/etc/php/php.ini
 
     # Remove pacotes de build desnecessários
@@ -55,6 +51,5 @@ if [ "$DEV_ENV" = "true" ]; then
 else
     echo "Ambiente de produção detectado, Xdebug não será instalado..."
 
-    # Copia a configuração do PHP para produção
     cp "$PHP_INI_DIR/php.ini-production" /usr/local/etc/php/php.ini
 fi

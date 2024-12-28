@@ -1,0 +1,77 @@
+.notification-container {
+    position: fixed;
+    bottom: 60px; /* Ajusta a posição para ficar mais acima */
+    right: 20px;
+    z-index: 1050;
+    max-width: 350px; /* Aumenta um pouco a largura máxima */
+}
+
+.alert {
+    margin-bottom: 15px; /* Aumenta o espaço entre notificações */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* Sombra mais pronunciada */
+    border-radius: 10px; /* Bordas mais arredondadas */
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    padding: 15px 20px;
+    font-size: 16px;
+    font-weight: 500;
+    color: #ffffff; /* Cor da fonte branca */
+}
+
+.custom-alert {
+    padding: 15px 20px;
+}
+
+.alert .btn-close {
+    margin-left: auto;
+    background-color: transparent;
+    border: none;
+    font-size: 1.5rem;
+    line-height: 1;
+    opacity: 0.8;
+    color: #ffffff; 
+}
+
+.alert.alert-danger {
+    background-color: #d9534f;
+    border-color: #d43f3a;
+}
+
+.alert.alert-success {
+    background-color: #5cb85c;
+    border-color: #4cae4c;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(100%);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.alert {
+    animation: slideIn 0.5s ease-in-out;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+table td {
+    vertical-align: middle; 
+    padding: 8px; 
+}
+
+table a.btn {
+    margin: 0;
+}
+
+table tr {
+    border-bottom: 1px solid #ccc;
+}

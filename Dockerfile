@@ -62,10 +62,14 @@ COPY --from=composer-stage /usr/bin/composer /usr/bin/composer
 COPY . /var/www/html
 
 # Permissoes
-# RUN chown -R www-data:www-data /var/www/html && chmod -R 755 /var/www/html
+RUN chown -R www-data:www-data /var/www/html && chmod -R 755 /var/www/html
 RUN chmod +x /var/www/html/scripts/setup-php.sh /var/www/html/start.sh
 
 WORKDIR /var/www/html
+
+# Composer install and dump-autoload
+RUN composer install --no-dev --no-interaction --no-progress --no-suggest --optimize-autoloader
+RUN composer dump-autoload --no-dev --optimize
 
 EXPOSE 80
 

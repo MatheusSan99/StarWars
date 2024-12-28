@@ -8,7 +8,7 @@ trait HtmlRendererTrait
 {
     private function renderTemplate(string $templateName, array $context = []): string
     {
-        $templatePath = __DIR__ . '/../../views/';
+        $templatePath = __DIR__ . '/../View/';
         extract($context);
 
         ob_start();

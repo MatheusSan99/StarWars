@@ -20,7 +20,11 @@ class LoginController
             ]);
         }
 
-        return new Response(200, [], $this->renderTemplate('login'));
+        $html = $this->renderTemplate('UserRegister/login-form', [
+            'titulo' => 'Login'
+        ]);
+        
+        return new Response(200, [], $html);
     }
 }
 
