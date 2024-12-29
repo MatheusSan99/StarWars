@@ -2,7 +2,7 @@ ARG PHP_VERSION=7.4.33
 ARG COMPOSER_VERSION=2.8.3
 
 # Estágio 1: Build
-FROM php:${PHP_VERSION}-cli-alpine AS builder
+FROM php:${PHP_VERSION}-fpm-alpine AS builder
 
 RUN apk add --no-cache --virtual .build-deps \
     bash \
@@ -38,7 +38,7 @@ RUN apk add --no-cache --virtual .build-deps \
 FROM composer:${COMPOSER_VERSION} AS composer-stage
 
 # Estágio 3: Final 
-FROM php:${PHP_VERSION}-cli-alpine
+FROM php:${PHP_VERSION}-fpm-alpine
 
 # Instalar dependências runtime necessárias
 RUN apk add --no-cache \
@@ -48,7 +48,8 @@ RUN apk add --no-cache \
     libsodium \
     yaml \
     sqlite \
-    bzip2-dev 
+    bzip2-dev \
+    nginx 
 
 RUN apk add gnu-libiconv
 ENV LD_PRELOAD=/usr/lib/preloadable_libiconv.so
@@ -57,20 +58,25 @@ ENV LD_PRELOAD=/usr/lib/preloadable_libiconv.so
 COPY --from=builder /usr/local/lib/php/extensions /usr/local/lib/php/extensions
 COPY --from=builder /usr/local/etc/php/conf.d /usr/local/etc/php/conf.d
 
+# Copiar Composer
 COPY --from=composer-stage /usr/bin/composer /usr/bin/composer
 
+# Copiar a aplicação e configuração do Nginx
 COPY . /var/www/html
+COPY ./nginx/default.conf /etc/nginx/nginx.conf
 
-# Permissoes
+# Permissões
 RUN chown -R www-data:www-data /var/www/html && chmod -R 755 /var/www/html
-RUN chmod +x /var/www/html/scripts/setup-php.sh /var/www/html/start.sh
 
+# Instalar dependências do Composer
 WORKDIR /var/www/html
-
-# Composer install and dump-autoload
 RUN composer install --no-dev --no-interaction --no-progress --no-suggest --optimize-autoloader
 RUN composer dump-autoload --no-dev --optimize
 
+# Torna o start.sh executável
+RUN chmod +x /var/www/html/start.sh
+
 EXPOSE 80
 
-ENTRYPOINT ["/bin/bash", "/var/www/html/start.sh"]
+# Executa o start.sh antes de iniciar Nginx e PHP-FPM
+CMD ["/bin/bash", "-c", "/var/www/html/start.sh && nginx -g 'daemon off;'"]

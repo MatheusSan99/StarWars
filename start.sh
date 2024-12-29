@@ -1,8 +1,11 @@
 #!/usr/bin/env bash
 
-set -e  # Para falhar em caso de erros
+set -e
 
 # Rodar o script de setup
 /var/www/html/scripts/setup-php.sh
 
-php -S 0.0.0.0:80 -t /var/www/html/
+# Iniciar o PHP-FPM
+php-fpm
+# Iniciar o Nginx
+nginx -g "daemon off;"
