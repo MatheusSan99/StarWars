@@ -2,9 +2,9 @@
 
 use StarWars\Controller\{
     Movies\MoviesController,
-    UserRegister\NewAccountController,
-    UserRegister\LoginController,
-    UserRegister\LogoutController,
+    Auth\LogoutController,
+    Auth\LoginController,
+    Auth\NewAccountController,
     Error\Error404Controller,
     
 

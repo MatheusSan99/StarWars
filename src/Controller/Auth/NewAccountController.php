@@ -2,10 +2,9 @@
 
 declare(strict_types=1);
 
-namespace StarWars\Controller\UserRegister;
+namespace StarWars\Controller\Auth;
 
 use Nyholm\Psr7\Response;
-use PDO;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;

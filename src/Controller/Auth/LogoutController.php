@@ -1,6 +1,6 @@
 <?php
 
-namespace StarWars\Controller\UserRegister;
+namespace StarWars\Controller\Auth;
 
 declare(strict_types=1);
 
