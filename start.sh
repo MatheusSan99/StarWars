@@ -6,6 +6,6 @@ set -e
 /var/www/html/scripts/setup-php.sh
 
 # Iniciar o PHP-FPM
-php-fpm
+php-fpm &
 # Iniciar o Nginx
 nginx -g "daemon off;"

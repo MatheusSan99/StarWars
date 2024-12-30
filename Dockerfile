@@ -79,4 +79,4 @@ RUN chmod +x /var/www/html/start.sh
 EXPOSE 80
 
 # Executa o start.sh antes de iniciar Nginx e PHP-FPM
-CMD ["/bin/bash", "-c", "/var/www/html/start.sh && nginx -g 'daemon off;'"]
+CMD ["/bin/bash", "-c", "/var/www/html/start.sh"]
