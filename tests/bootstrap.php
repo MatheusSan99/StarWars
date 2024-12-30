@@ -2,7 +2,7 @@
 
 use DI\ContainerBuilder;
 use Psr\Container\ContainerInterface;
-use StarWars\Repository\Auth\AccountRepository;
+use StarWars\Repository\Account\AccountRepository;
 
 require __DIR__ . '/../vendor/autoload.php';
 
@@ -22,7 +22,6 @@ function getTestDatabaseConnection(): PDO
     return $pdo;
 }
 
-// Função para criar o container de dependências para testes
 function createTestContainer(): ContainerInterface
 {
     $containerBuilder = new ContainerBuilder();

@@ -12,7 +12,7 @@ class AuthMiddleware implements MiddlewareInterface
 {
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        if (array_key_exists('logado', $_SESSION) && $_SESSION['logado'] === true) {
+        if (array_key_exists('logged', $_SESSION) && $_SESSION['logged'] === true) {
             return $handler->handle($request);
         }
 

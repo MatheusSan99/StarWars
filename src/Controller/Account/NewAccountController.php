@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace StarWars\Controller\Auth;
+namespace StarWars\Controller\NewAccountController;
 
 use Nyholm\Psr7\Response;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use StarWars\Controller\UseCases\Auth\CreateNewAccountCase;
+use StarWars\Controller\UseCases\Account\CreateNewAccountCase;
 use StarWars\Helper\FlashMessageTrait;
 use StarWars\Helper\HtmlRendererTrait;
-use StarWars\Repository\Auth\AccountRepository;
+use StarWars\Repository\Account\AccountRepository;
 
 class NewAccountController
 {

@@ -1,8 +1,8 @@
 <?php
 
-namespace StarWars\Controller\UseCases\Auth;
+namespace StarWars\Controller\UseCases\Account;
 
-use StarWars\Repository\AccountRepository;
+use StarWars\Repository\Account\AccountRepository;
 
 class DeleteAccountCase
 {

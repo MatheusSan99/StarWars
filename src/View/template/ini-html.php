@@ -53,7 +53,7 @@ define('PROJECT_PUBLIC', './../../../public');
                 </div>
             </div>
 
-            <?php if (!empty($_SESSION['logado'])): ?>
+            <?php if (!empty($_SESSION['logged'])): ?>
                 <ul class="nav">
                     <li class="nav-item" id="newNoticeNavBar">
                         <a class="nav-link active" href="/nova-noticia">Nova Noticia</a>

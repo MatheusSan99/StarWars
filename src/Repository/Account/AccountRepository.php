@@ -1,8 +1,8 @@
 <?php
 
-namespace StarWars\Repository\Auth;
+namespace StarWars\Repository\Account;
 
-use StarWars\Model\Auth\AccountModel;
+use StarWars\Model\Account\AccountModel;
 
 class AccountRepository {
     
@@ -23,12 +23,14 @@ class AccountRepository {
             'role' => $Account->getRole()
         ]);
 
+        $Account->setId((int) $this->pdo->lastInsertId());
+
         return $this->pdo->lastInsertId();
     }
 
     public function getAccountByEmail(string $email): ?AccountModel
     {
-        $statement = $this->pdo->prepare('SELECT * FROM users WHERE email = :email');
+        $statement = $this->pdo->prepare('SELECT * FROM account WHERE email = :email');
         $statement->execute([
             'email' => $email
         ]);
@@ -36,7 +38,7 @@ class AccountRepository {
         $user = $statement->fetch();
 
         if (!$user) {
-            return null;
+            throw new \Exception('Usuário não encontrado, verifi', 404);
         }
 
         return new AccountModel(
@@ -50,7 +52,7 @@ class AccountRepository {
 
     public function getAccountById(int $id): ?AccountModel
     {
-        $statement = $this->pdo->prepare('SELECT * FROM users WHERE id = :id');
+        $statement = $this->pdo->prepare('SELECT * FROM account WHERE id = :id');
         $statement->execute([
             'id' => $id
         ]);
@@ -72,7 +74,7 @@ class AccountRepository {
 
     public function updateAccount(AccountModel $Account)
     {
-        $statement = $this->pdo->prepare('UPDATE users SET name = :name, email = :email, password = :password, role = :role WHERE id = :id');
+        $statement = $this->pdo->prepare('UPDATE account SET name = :name, email = :email, password = :password, role = :role WHERE id = :id');
         $statement->execute([
             'id' => $Account->getId(),
             'name' => $Account->getName(),
@@ -92,7 +94,7 @@ class AccountRepository {
 
     public function deleteAccount(int $id)
     {
-        $statement = $this->pdo->prepare('DELETE FROM users WHERE id = :id');
+        $statement = $this->pdo->prepare('DELETE FROM account WHERE id = :id');
         $statement->execute([
             'id' => $id
         ]);

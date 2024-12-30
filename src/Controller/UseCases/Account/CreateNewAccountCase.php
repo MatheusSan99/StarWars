@@ -1,9 +1,9 @@
 <?php
 
-namespace StarWars\Controller\UseCases\Auth;
+namespace StarWars\Controller\UseCases\Account;
 
-use StarWars\Model\Auth\AccountModel;
-use StarWars\Repository\Auth\AccountRepository;
+use StarWars\Model\Account\AccountModel;
+use StarWars\Repository\Account\AccountRepository;
 
 class CreateNewAccountCase
 {

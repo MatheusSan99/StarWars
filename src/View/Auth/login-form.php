@@ -29,10 +29,10 @@
                 </div>
               </div>
               <div class="card-footer text-center">
-                <button class="btn btn-primary btn-round btn-lg btn-block" type="submit" value="Entrar">Login</button>
+                <button class="btn btn-primary btn-round btn-lg btn-block" type="submit" value="Entrar">Logar</button>
                 <div class="pull-mid">
                   <h6>
-                    <a href="/create-account" class="link">Create Account</a>
+                    <a href="/create-account" class="link">Criar Conta</a>
                   </h6>
                 </div>
             </form>

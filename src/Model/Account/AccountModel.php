@@ -1,6 +1,6 @@
 <?php
 
-namespace StarWars\Model\Auth;
+namespace StarWars\Model\Account;
 
 class AccountModel
 {
@@ -15,7 +15,7 @@ class AccountModel
         $this->id = $id;
         $this->name = $name;
         $this->email = $email;
-        $this->password = $password;
+        $this->password = password_hash($password, PASSWORD_ARGON2ID);
         $this->role = $role;
     }
 
@@ -34,7 +34,7 @@ class AccountModel
         return $this->email;
     }
 
-    public function getPassword(): string
+    public function getPassword()
     {
         return $this->password;
     }
@@ -47,6 +47,23 @@ class AccountModel
     public function isAdmin(): bool
     {
         return $this->role === 'admin';
+    }
+
+    public function setId(int $id): void
+    {
+        if (empty($id) || $this->getId() !== 0) {
+            throw new \InvalidArgumentException('Nao é possivel alterar o id', 400);
+        }
+
+        $this->id = $id;
+    }
+
+    public function changeName(string $name): void
+    {
+        if (strlen($name) < 3) {
+            throw new \InvalidArgumentException('Name must be at least 3 characters', 400);
+        }
+        $this->name = $name;
     }
 
     public function changeEmail(string $email): void

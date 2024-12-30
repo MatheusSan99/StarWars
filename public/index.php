@@ -21,7 +21,7 @@ session_regenerate_id();
 $isLoginRoute = $pathInfo === '/login';
 $isCreateAccountRoute = $pathInfo === '/create-account';
 
-if (!array_key_exists('logado', $_SESSION) && !$isLoginRoute && !$isCreateAccountRoute) {
+if (!array_key_exists('logged', $_SESSION) && !$isLoginRoute && !$isCreateAccountRoute) {
     header('Location: /login');
     return;
 }

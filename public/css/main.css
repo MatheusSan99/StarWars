@@ -75,3 +75,10 @@ table a.btn {
 table tr {
     border-bottom: 1px solid #ccc;
 }
+
+body {
+    background-image: url('../img/background.jpg');
+    background-size: cover;
+    background-position: center top; 
+    background-attachment: fixed;
+}

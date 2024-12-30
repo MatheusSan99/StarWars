@@ -1,9 +1,9 @@
 <?php
 
-namespace StarWars\Controller\UseCases\Auth;
+namespace StarWars\Controller\UseCases\Account;
 
-use StarWars\Model\AccountModel;
-use StarWars\Repository\AccountRepository;
+use StarWars\Model\Account\AccountModel;
+use StarWars\Repository\Account\AccountRepository;
 
 class GetAccountByIdCase
 {

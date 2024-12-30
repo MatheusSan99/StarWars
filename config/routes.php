@@ -2,9 +2,9 @@
 
 use StarWars\Controller\{
     Movies\MoviesController,
-    Auth\LogoutController,
     Auth\LoginController,
-    Auth\NewAccountController,
+    Auth\LogoutController,
+    Account\NewAccountController,
     Error\Error404Controller,
     
 
@@ -13,19 +13,20 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Slim\App;
 use Slim\Psr7\Factory\ResponseFactory;
+use Slim\Routing\RouteCollectorProxy;
 
 return function (App $app) {
     $app->options('/{routes:.*}', function (ServerRequestInterface $request, ResponseInterface $response, $args) {
         return $response;
     });
 
-    $app->get('/', function (ServerRequestInterface $request, ResponseInterface $response) {
-        $response = $response->withHeader('Content-Type', 'text/html');
-        return $response;
-    });
-
     $app->get('/movies', [MoviesController::class, 'getMovies'])->add(new \StarWars\Middleware\AuthMiddleware());
-    $app->get('/login', [LoginController::class, 'loginForm']);
+
+    $app->group('', function (RouteCollectorProxy $app) {
+        $app->get('/login', [LoginController::class, 'loginForm']);
+        $app->post('/login', [LoginController::class, 'login']);
+        $app->post('/logout', [LogoutController::class, 'logout']);
+    });
 
     $app->map(['GET', 'POST', 'PUT', 'DELETE', 'PATCH'], '/{routes:.+}', function () use ($app) {
         $responseFactory = new ResponseFactory();

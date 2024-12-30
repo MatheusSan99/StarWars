@@ -6,7 +6,8 @@ use Monolog\Logger;
 use Monolog\Processor\UidProcessor;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
-use StarWars\Repository\Auth\AccountRepository;
+use StarWars\Controller\UseCases\Auth\AccountLoginCase;
+use StarWars\Repository\Account\AccountRepository;
 
 return function (ContainerBuilder $containerBuilder) {
     $containerBuilder->addDefinitions([
@@ -43,6 +44,10 @@ return function (ContainerBuilder $containerBuilder) {
 
         AccountRepository::class => function (ContainerInterface $c) {
             return new AccountRepository($c->get(PDO::class));
+        },
+
+        AccountLoginCase::class => function (ContainerInterface $c) {
+            return new AccountLoginCase($c->get(AccountRepository::class));
         }
     ]);
     
