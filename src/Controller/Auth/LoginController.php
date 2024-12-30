@@ -8,12 +8,16 @@ use Nyholm\Psr7\Response;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Log\LoggerInterface;
+use StarWars\Controller\UseCases\Account\GetAccountByEmailCase;
 use StarWars\Controller\UseCases\Auth\AccountLoginCase;
+use StarWars\Helper\FlashMessageTrait;
 use StarWars\Helper\HtmlRendererTrait;
 
 class LoginController
 {
     use HtmlRendererTrait;
+    use FlashMessageTrait;
+
     private ContainerInterface $container;
     private LoggerInterface $logger;
 
@@ -45,12 +49,21 @@ class LoginController
     
         if ($email === false || $password === false) {
             $this->logger->warning('Dados inválidos durante o login', ['email' => $email]);
-            return new Response(400, [], 'Dados inválidos');
+            $this->addErrorMessage('Email ou senha inválidos');
+
+            return new Response(302, [
+                'Location' => '/login'
+            ]);
         }
     
+        $AccountByEmail = $this->container->get(GetAccountByEmailCase::class);
         $loginCase = $this->container->get(AccountLoginCase::class);
+
         try {
-            $token = $loginCase->execute($email, $password);
+            $Account = $AccountByEmail->execute($email);
+
+            $token = $loginCase->execute($Account->getEmail(), $password);
+
             $_SESSION['logged'] = true;
     
             $expirationTime = time() + 43200; 
@@ -72,7 +85,10 @@ class LoginController
             ]);
         } catch (\InvalidArgumentException $e) {
             $this->logger->warning('Usuário não encontrado', ['email' => $email]);
-            return new Response($e->getCode(), [], $e->getMessage());
+            $this->addErrorMessage('Email ou senha inválidos');
+            return new Response(302, [
+                'Location' => '/login'
+            ]);
         }
     }
 

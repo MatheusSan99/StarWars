@@ -6,7 +6,7 @@
 # Datasource local storage ignored files
 /dataSources/
 /dataSources.local.xml
-logs/
+/logs/
 .env
 .vscode/
 phpunit.html
@@ -21,3 +21,5 @@ phpunit.html
 /docker/aws/*
 /docker/awscliv2.zip
 *.pem
+/database/database.sqlite
+./phpunit.result.cache

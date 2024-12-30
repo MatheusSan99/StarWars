@@ -15,7 +15,7 @@ class AccountModel
         $this->id = $id;
         $this->name = $name;
         $this->email = $email;
-        $this->password = password_hash($password, PASSWORD_ARGON2ID);
+        $this->password = $password;
         $this->role = $role;
     }
 
@@ -86,12 +86,10 @@ class AccountModel
     public function toArray(): array
     {
         return [
-            'id' => $this->id,
-            'name' => $this->name,
-            'email' => $this->email,
-            'password' => $this->password,
-            'role' => $this->role
+            'id' => $this->getId(),
+            'name' => $this->getName(),
+            'email' => $this->getEmail(),
+            'role' => $this->getRole()
         ];
     }
-
 }

@@ -14,11 +14,8 @@ class GetAccountByEmailCase
         $this->AccountRepository = $AccountRepository;
     }
 
-    public function execute(string $name, string $email, string $password, string $role): AccountModel
+    public function execute(string $email): AccountModel
     {
-        $user = new AccountModel(0, $name, $email, $password, $role);
-        $this->AccountRepository->createAccount($user);
-
-        return $user;
+        return $this->AccountRepository->getAccountByEmail($email);
     }
 }

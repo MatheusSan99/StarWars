@@ -77,8 +77,15 @@ table tr {
 }
 
 body {
-    background-image: url('../img/background.jpg');
+    background-image: url('../img/backgrounds/main-background.jpg');
     background-size: cover;
     background-position: center top; 
+    background-attachment: fixed;
+}
+
+#body-register {
+    background-image: url('../img/backgrounds/register-background.jpg');
+    background-size: cover;
+    background-position: center top;
     background-attachment: fixed;
 }

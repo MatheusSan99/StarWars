@@ -11,7 +11,7 @@ function getTestDatabaseConnection(): PDO
     $pdo = new PDO('sqlite::memory:');
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-    $pdo->exec("CREATE TABLE account (
+    $pdo->exec("CREATE TABLE accounts (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT NOT NULL,
         email TEXT NOT NULL UNIQUE,

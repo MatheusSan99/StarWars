@@ -6,6 +6,8 @@ use Monolog\Logger;
 use Monolog\Processor\UidProcessor;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
+use StarWars\Controller\UseCases\Account\GetAccountByEmailCase;
+use StarWars\Controller\UseCases\Account\GetAccountByIdCase;
 use StarWars\Controller\UseCases\Auth\AccountLoginCase;
 use StarWars\Repository\Account\AccountRepository;
 
@@ -27,14 +29,16 @@ return function (ContainerBuilder $containerBuilder) {
 
     $containerBuilder->addDefinitions([
         PDO::class => function (ContainerInterface $c) {
-            $dbSettings = $c->get('settings')['db'];
-            $dsn = 'sqlite:' . $dbSettings['database'];
+            $dbPath = __DIR__ . './../database/database.sqlite';
+            $dsn = 'sqlite:' . $dbPath;
     
             try {
                 $pdo = new PDO($dsn);
                 $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+                
             } catch (PDOException $e) {
-                echo "Erro de conexão: " . $e->getMessage();
+                echo 'Connection failed: ' . $e->getMessage();
+                $this->logger->error('Connection failed: ' . $e->getMessage());
                 exit;
             }
     
@@ -48,6 +52,10 @@ return function (ContainerBuilder $containerBuilder) {
 
         AccountLoginCase::class => function (ContainerInterface $c) {
             return new AccountLoginCase($c->get(AccountRepository::class));
+        },
+
+        GetAccountByEmailCase::class => function (ContainerInterface $c) {
+            return new GetAccountByEmailCase($c->get(AccountRepository::class));
         }
     ]);
     

@@ -17,8 +17,7 @@ class CreateNewAccountCase
     public function execute(string $name, string $email, string $password, string $role = 'user'): AccountModel
     {
         $user = new AccountModel(0, $name, $email, $password, $role);
-        $this->AccountRepository->createAccount($user);
 
-        return $user;
+        return $this->AccountRepository->createAccount($user);
     }
 }

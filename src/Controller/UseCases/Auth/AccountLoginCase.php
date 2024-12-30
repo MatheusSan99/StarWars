@@ -23,6 +23,6 @@ class AccountLoginCase
             $AuthService = new AuthService();
             return $AuthService->generateToken($AccountModel);
         }
-        throw new \InvalidArgumentException('Invalid email or password', 401);
+         throw new \InvalidArgumentException('Invalid email or password', 401);
     }
 }

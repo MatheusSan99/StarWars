@@ -20,12 +20,22 @@ return function (App $app) {
         return $response;
     });
 
+    $app->get('/', function (ServerRequestInterface $request, ResponseInterface $response, $args) {
+        $response->getBody()->write('Star Wars API');
+        setcookie('auth_token', '', time() - 43200, '/', '', true, true); 
+        session_destroy();
+        
+        return $response;
+    });
+
     $app->get('/movies', [MoviesController::class, 'getMovies'])->add(new \StarWars\Middleware\AuthMiddleware());
 
     $app->group('', function (RouteCollectorProxy $app) {
         $app->get('/login', [LoginController::class, 'loginForm']);
         $app->post('/login', [LoginController::class, 'login']);
         $app->post('/logout', [LogoutController::class, 'logout']);
+        $app->get('/create-account', [NewAccountController::class, 'createAccount']);
+        $app->post('/create-account', [NewAccountController::class, 'confirmCreation']);
     });
 
     $app->map(['GET', 'POST', 'PUT', 'DELETE', 'PATCH'], '/{routes:.+}', function () use ($app) {

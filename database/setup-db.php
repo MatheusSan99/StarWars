@@ -3,18 +3,26 @@
 declare(strict_types=1);
 
 $dbPath = __DIR__ . '/database.sqlite';
+$dbDir = __DIR__; 
+
+if (!file_exists($dbDir)) {
+    mkdir($dbDir, 0777, true); 
+}
 
 if (!file_exists($dbPath)) {
-    touch($dbPath);
+    touch($dbPath); 
+    chmod($dbPath, 0666);
 }
+
+chmod($dbDir, 0777); 
 
 $pdo = new PDO("sqlite:$dbPath");
 
 $createAccountsTable = '
-    CREATE TABLE IF NOT EXISTS account (
+    CREATE TABLE IF NOT EXISTS accounts (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT NOT NULL,
-        email TEXT NOT NULL,
+        email TEXT NOT NULL UNIQUE,
         password TEXT NOT NULL,
         role TEXT NOT NULL
     );
@@ -67,7 +75,7 @@ $pdo->exec($createMovieTable);
 $pdo->exec($createCharactersTable);
 $pdo->exec($createStarshipsTable);
 
-$checkUserAdmin = 'SELECT * FROM account WHERE email = "admin@gmail.com";';
+$checkUserAdmin = 'SELECT * FROM accounts WHERE email = "admin@gmail.com";';
 
 $statement = $pdo->query($checkUserAdmin);
 
@@ -77,7 +85,7 @@ if (!empty($statement->fetchAll())) {
 
 $password = password_hash('123456', PASSWORD_ARGON2ID);
 
-$inserirUsuarioPadrao = 'INSERT INTO account (name, email, password, role) VALUES ("Administrador", "admin@gmail.com", ?, "admin");';
+$inserirUsuarioPadrao = 'INSERT INTO accounts (name, email, password, role) VALUES ("Administrador", "admin@gmail.com", ?, "admin");';
 
 $statement = $pdo->prepare($inserirUsuarioPadrao);
 

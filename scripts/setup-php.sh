@@ -53,3 +53,9 @@ else
 
     cp "$PHP_INI_DIR/php.ini-production" /usr/local/etc/php/php.ini
 fi
+
+# Configurar Database
+
+echo "Configurando o banco de dados..."
+
+php "$CONTAINER_PHP_DIR/database/setup-db.php" || { echo "Erro ao configurar o banco de dados"; exit 0; }
