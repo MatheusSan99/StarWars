@@ -6,6 +6,7 @@ use Monolog\Logger;
 use Monolog\Processor\UidProcessor;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
+use StarWars\Repository\Auth\AccountRepository;
 
 return function (ContainerBuilder $containerBuilder) {
     $containerBuilder->addDefinitions([
@@ -26,18 +27,24 @@ return function (ContainerBuilder $containerBuilder) {
     $containerBuilder->addDefinitions([
         PDO::class => function (ContainerInterface $c) {
             $dbSettings = $c->get('settings')['db'];
-    
             $dsn = 'sqlite:' . $dbSettings['database'];
-            
+    
             try {
                 $pdo = new PDO($dsn);
                 $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             } catch (PDOException $e) {
-                echo "Error in DB conn: " . $e->getMessage();
+                echo "Erro de conexão: " . $e->getMessage();
+                exit;
             }
     
             return $pdo;
+        },
+    
+
+        AccountRepository::class => function (ContainerInterface $c) {
+            return new AccountRepository($c->get(PDO::class));
         }
     ]);
+    
     
 };

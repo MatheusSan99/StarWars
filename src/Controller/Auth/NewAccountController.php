@@ -5,15 +5,26 @@ declare(strict_types=1);
 namespace StarWars\Controller\UserRegister;
 
 use Nyholm\Psr7\Response;
+use PDO;
+use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use StarWars\Controller\UseCases\Auth\CreateNewAccountCase;
 use StarWars\Helper\FlashMessageTrait;
 use StarWars\Helper\HtmlRendererTrait;
+use StarWars\Repository\Auth\AccountRepository;
 
 class NewAccountController
 {
     use HtmlRendererTrait;
     use FlashMessageTrait;
+
+    private $container;
+
+    public function __construct(ContainerInterface $container)
+    {
+        $this->container = $container;
+    }
 
     public function createAccount(ServerRequestInterface $request): ResponseInterface
     {
@@ -34,17 +45,8 @@ class NewAccountController
 
         $passwordHash = password_hash($password, PASSWORD_ARGON2ID);
 
-        $dbPath = __DIR__ . '/../../banco.sqlite';
-        $pdo = new \PDO("sqlite:$dbPath");
+        $createNewAccount = new CreateNewAccountCase($this->container->get(AccountRepository::class));
 
-        $statement = $pdo->prepare('INSERT INTO users (name, email, password, role) VALUES (?, ?, ?, "user")');
-        $statement->bindValue(1, $name);
-        $statement->bindValue(2, $email);
-        $statement->bindValue(3, $passwordHash);
-        $statement->execute();
-
-        $this->addSuccessMessage('Usuário criado com sucesso, faça login para continuar.');
-
-        return new Response(302, ['Location' => '/login']);
+        return $createNewAccount->execute($name, $email, $passwordHash);
     }
 }
