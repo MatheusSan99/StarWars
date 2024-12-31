@@ -2,7 +2,7 @@
 
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
-use StarWars\Controller\UseCases\Account\CreateNewAccountCase;
+use StarWars\UseCases\Account\CreateNewAccountCase;
 use StarWars\Repository\Account\AccountRepository;
 
 class AccountRegistrationTest extends TestCase

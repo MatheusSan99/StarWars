@@ -14,6 +14,8 @@ use Psr\Http\Message\ServerRequestInterface;
 use Slim\App;
 use Slim\Psr7\Factory\ResponseFactory;
 use Slim\Routing\RouteCollectorProxy;
+use StarWars\Controller\Film\FilmController;
+use StarWars\Controller\Movies\CatalogController;
 
 return function (App $app) {
     $app->options('/{routes:.*}', function (ServerRequestInterface $request, ResponseInterface $response, $args) {
@@ -28,7 +30,9 @@ return function (App $app) {
         return $response;
     });
 
-    $app->get('/movies', [MoviesController::class, 'getMovies'])->add(new \StarWars\Middleware\AuthMiddleware());
+    $app->get('/catalog', [CatalogController::class, 'getCatalog'])->add(new \StarWars\Middleware\AuthMiddleware());
+
+    $app->get('/film/{id}', [FilmController::class, 'getFilm'])->add(new \StarWars\Middleware\AuthMiddleware());
 
     $app->group('', function (RouteCollectorProxy $app) {
         $app->get('/login', [LoginController::class, 'loginForm']);

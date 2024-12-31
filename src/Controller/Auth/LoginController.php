@@ -8,10 +8,11 @@ use Nyholm\Psr7\Response;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Log\LoggerInterface;
-use StarWars\Controller\UseCases\Account\GetAccountByEmailCase;
-use StarWars\Controller\UseCases\Auth\AccountLoginCase;
+use StarWars\UseCases\Account\GetAccountByEmailCase;
+use StarWars\UseCases\Auth\AccountLoginCase;
 use StarWars\Helper\FlashMessageTrait;
 use StarWars\Helper\HtmlRendererTrait;
+use StarWars\UseCases\API\GetCatalogCase;
 
 class LoginController
 {
@@ -80,9 +81,15 @@ class LoginController
     
             $this->logger->info('Usuário logado', ['email' => $email]);
 
-            return new Response(302, [
-                'Location' => '/'
+            $GetCatalogCase = $this->container->get(GetCatalogCase::class);
+
+            $Catalog = $GetCatalogCase->execute();
+            $html = $this->renderTemplate('Catalog/movies-list', [
+                'titulo' => 'Catalogo de Filmes',
+                'catalog' => $Catalog 
             ]);
+            
+            return new Response(200, [], $html);
         } catch (\InvalidArgumentException $e) {
             $this->logger->warning('Usuário não encontrado', ['email' => $email]);
             $this->addErrorMessage('Email ou senha inválidos');

@@ -6,10 +6,15 @@ use Monolog\Logger;
 use Monolog\Processor\UidProcessor;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
-use StarWars\Controller\UseCases\Account\GetAccountByEmailCase;
-use StarWars\Controller\UseCases\Account\GetAccountByIdCase;
-use StarWars\Controller\UseCases\Auth\AccountLoginCase;
+use StarWars\UseCases\Account\GetAccountByEmailCase;
+use StarWars\UseCases\Auth\AccountLoginCase;
 use StarWars\Repository\Account\AccountRepository;
+use StarWars\Service\Connection\ConnectionInterface;
+use StarWars\Service\Connection\CurlConnection;
+use StarWars\Service\StarwarsAPI\Films\FilmsAPI;
+use StarWars\Service\StarwarsAPI\Films\FilmsInterface;
+use StarWars\UseCases\API\GetCatalogCase;
+use StarWars\UseCases\API\GetFilmCase;
 
 return function (ContainerBuilder $containerBuilder) {
     $containerBuilder->addDefinitions([
@@ -44,7 +49,11 @@ return function (ContainerBuilder $containerBuilder) {
     
             return $pdo;
         },
-    
+        
+        ConnectionInterface::class => \DI\create(CurlConnection::class),
+        FilmsInterface::class => function (ContainerInterface $c) {
+            return new FilmsAPI($c->get(ConnectionInterface::class));
+        },
 
         AccountRepository::class => function (ContainerInterface $c) {
             return new AccountRepository($c->get(PDO::class));
@@ -56,6 +65,14 @@ return function (ContainerBuilder $containerBuilder) {
 
         GetAccountByEmailCase::class => function (ContainerInterface $c) {
             return new GetAccountByEmailCase($c->get(AccountRepository::class));
+        },
+
+        GetCatalogCase::class => function (ContainerInterface $c) {
+            return new GetCatalogCase($c->get(FilmsInterface::class));
+        },
+
+        GetFilmCase::class => function (ContainerInterface $c) {
+            return new GetFilmCase($c->get(FilmsInterface::class));
         }
     ]);
     

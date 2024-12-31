@@ -29,7 +29,11 @@ define('PROJECT_PUBLIC', './../../../public');
     <script src="<?php echo PROJECT_PUBLIC; ?>/js/plugins/nouislider.min.js"></script>
     <script src="<?php echo PROJECT_PUBLIC; ?>/js/plugins/bootstrap-datepicker.js"></script>
     <script src="<?php echo PROJECT_PUBLIC; ?>/js/now-ui-kit.js?v=1.3.0" type="text/javascript"></script>
-    <title>Seminario Uniasselvi</title>
+    <?php if (isset($title)): ?>
+        <title><?php echo $title; ?></title>
+    <?php else: ?>
+        <title>Star Wars</title>
+    <?php endif; ?>
     <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
 </head>
 

@@ -89,3 +89,11 @@ body {
     background-position: center top;
     background-attachment: fixed;
 }
+
+#body-characters {
+    background-image: url('../img/backgrounds/characters-background.jpg');
+    background-size: cover;
+    background-position: center top;
+    background-attachment: fixed;
+}
+

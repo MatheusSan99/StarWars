@@ -85,8 +85,6 @@ class AccountRepository {
             throw new \Exception('Usuário não encontrado', 404);
         }
     
-        # Update only necessary fields
-    
         if ($Account->getName() !== $AccountDatabase->getName()) {
             $statement = $this->pdo->prepare('UPDATE accounts SET name = :name WHERE id = :id');
             $statement->execute([
@@ -121,7 +119,7 @@ class AccountRepository {
             ]);
         } 
     
-        return $this->pdo->errorCode() === '00000';
+        return $Account;
     }
     
 

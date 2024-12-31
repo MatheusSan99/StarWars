@@ -9,7 +9,7 @@ use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Log\LoggerInterface;
-use StarWars\Controller\UseCases\Account\CreateNewAccountCase;
+use StarWars\UseCases\Account\CreateNewAccountCase;
 use StarWars\Helper\FlashMessageTrait;
 use StarWars\Helper\HtmlRendererTrait;
 use StarWars\Repository\Account\AccountRepository;

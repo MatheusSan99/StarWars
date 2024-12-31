@@ -2,8 +2,8 @@
 
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
-use StarWars\Controller\UseCases\Account\CreateNewAccountCase;
-use StarWars\Controller\UseCases\Auth\AccountLoginCase;
+use StarWars\UseCases\Account\CreateNewAccountCase;
+use StarWars\UseCases\Auth\AccountLoginCase;
 use StarWars\Repository\Account\AccountRepository;
 use StarWars\Service\Auth\AuthService;
 
