@@ -4,35 +4,42 @@ declare(strict_types=1);
 
 namespace StarWars\Controller\Auth;
 
+use Exception;
 use Nyholm\Psr7\Response;
-use Psr\Container\ContainerInterface;
-use Psr\Http\Message\ResponseInterface;
 use Psr\Log\LoggerInterface;
 use StarWars\UseCases\Account\GetAccountByEmailCase;
 use StarWars\UseCases\Auth\AccountLoginCase;
 use StarWars\Helper\FlashMessageTrait;
 use StarWars\Helper\HtmlRendererTrait;
 use StarWars\UseCases\API\GetCatalogCase;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Slim\Psr7\Response as Psr7Response;
+use StarWars\Exceptions\Auth\AuthenticationException;
 
 class LoginController
 {
     use HtmlRendererTrait;
     use FlashMessageTrait;
 
-    private ContainerInterface $container;
     private LoggerInterface $logger;
+    private GetAccountByEmailCase $GetAccountByEmailCase;
+    private AccountLoginCase $AccountLoginCase;
+    private GetCatalogCase $GetCatalogCase;
 
-    public function __construct(ContainerInterface $container, LoggerInterface $logger)
+    public function __construct(LoggerInterface $logger, GetAccountByEmailCase $GetAccountByEmailCase, AccountLoginCase $AccountLoginCase, GetCatalogCase $GetCatalogCase)
     {
-        $this->container = $container;
         $this->logger = $logger;
+        $this->GetAccountByEmailCase = $GetAccountByEmailCase;
+        $this->AccountLoginCase = $AccountLoginCase;
+        $this->GetCatalogCase = $GetCatalogCase;
     }
 
     public function loginForm(): ResponseInterface
     {
         if (array_key_exists('logged', $_SESSION) && $_SESSION['logged'] === true) {
             return new Response(302, [
-                'Location' => '/'
+                'Location' => '/pages/catalog'
             ]);
         }
 
@@ -43,27 +50,14 @@ class LoginController
         return new Response(200, [], $html);
     }
 
-    public function login(): ResponseInterface
+    public function login(ServerRequestInterface $request, Psr7Response $response, array $args): ResponseInterface
     {
-        $email = filter_input(INPUT_POST, 'email', FILTER_VALIDATE_EMAIL);
-        $password = filter_input(INPUT_POST, 'password', FILTER_SANITIZE_STRING);
+        $email = $request->getParsedBody()['email'];
+        $password = $request->getParsedBody()['password'];
     
-        if ($email === false || $password === false) {
-            $this->logger->warning('Dados inválidos durante o login', ['email' => $email]);
-            $this->addErrorMessage('Email ou senha inválidos');
-
-            return new Response(302, [
-                'Location' => '/login'
-            ]);
-        }
-    
-        $AccountByEmail = $this->container->get(GetAccountByEmailCase::class);
-        $loginCase = $this->container->get(AccountLoginCase::class);
-
         try {
-            $Account = $AccountByEmail->execute($email);
-
-            $token = $loginCase->execute($Account->getEmail(), $password);
+            $Account = $this->GetAccountByEmailCase->execute($email);
+            $token = $this->AccountLoginCase->execute($Account->getEmail(), $password);
 
             $_SESSION['logged'] = true;
     
@@ -81,23 +75,20 @@ class LoginController
     
             $this->logger->info('Usuário logado', ['email' => $email]);
 
-            $GetCatalogCase = $this->container->get(GetCatalogCase::class);
+            $response->getBody()->write(json_encode([
+                'message' => 'Usuário logado com sucesso',
+                'token' => $token,
+                'expiration' => $expirationTime
+            ]));
 
-            $Catalog = $GetCatalogCase->execute();
-            $html = $this->renderTemplate('Catalog/movies-list', [
-                'titulo' => 'Catalogo de Filmes',
-                'catalog' => $Catalog 
-            ]);
+            return $response->withHeader('Content-Type', 'application/json');
             
-            return new Response(200, [], $html);
-        } catch (\InvalidArgumentException $e) {
-            $this->logger->warning('Usuário não encontrado', ['email' => $email]);
-            $this->addErrorMessage('Email ou senha inválidos');
+        } catch (Exception $e) {
+            $this->logger->warning($e->getMessage(), ['email' => $email]);
+            $this->addErrorMessage($e->getMessage());
             return new Response(302, [
                 'Location' => '/login'
             ]);
         }
     }
-
 }
-

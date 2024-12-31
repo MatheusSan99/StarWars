@@ -2,6 +2,7 @@
 
 namespace StarWars\Repository\Account;
 
+use StarWars\Exceptions\Auth\AccountException;
 use StarWars\Model\Account\AccountModel;
 
 class AccountRepository {
@@ -43,7 +44,7 @@ class AccountRepository {
         $user = $statement->fetch();
 
         if (!$user) {
-            throw new \Exception('Usuário não encontrado, verifi', 404);
+            throw new AccountException(AccountException::USER_NOT_FOUND);
         }
 
         return new AccountModel(
@@ -65,7 +66,7 @@ class AccountRepository {
         $user = $statement->fetch();
 
         if (!$user) {
-            return null;
+            throw new AccountException(AccountException::USER_NOT_FOUND);
         }
 
         return new AccountModel(
@@ -82,7 +83,7 @@ class AccountRepository {
         $AccountDatabase = $this->getAccountById($Account->getId());
     
         if (!$AccountDatabase) {
-            throw new \Exception('Usuário não encontrado', 404);
+            throw new AccountException(AccountException::USER_NOT_FOUND);
         }
     
         if ($Account->getName() !== $AccountDatabase->getName()) {

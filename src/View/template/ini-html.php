@@ -11,16 +11,15 @@ define('PROJECT_PUBLIC', './../../../public');
         name='viewport' />
 
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
-    <!-- Usando a constante -->
     <link rel="stylesheet" href="<?php echo PROJECT_PUBLIC; ?>/css/reset.css">
     <link rel="stylesheet" href="<?php echo PROJECT_PUBLIC; ?>/css/bootstrap.min.css">
     <link rel="stylesheet" href="<?php echo PROJECT_PUBLIC; ?>/css/now-ui-kit.css?v=1.3.0" rel="stylesheet">
     <link rel="stylesheet" href="<?php echo PROJECT_PUBLIC; ?>/css/main.css">
     <link rel="apple-touch-icon" sizes="76x76" href="<?php echo PROJECT_PUBLIC; ?>/assets/img/apple-icon.png">
     <link rel="icon" type="image/png" href="<?php echo PROJECT_PUBLIC; ?>/assets/img/favicon.png">
-    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700,200" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700,200" rel="stylesheet" /> 
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css"
-        integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+      integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
     <script src="<?php echo PROJECT_PUBLIC; ?>/js/core/jquery.min.js"></script>
     <script src="<?php echo PROJECT_PUBLIC; ?>/js/main.js"></script>
     <script src="<?php echo PROJECT_PUBLIC; ?>/js/core/popper.min.js"></script>
@@ -63,11 +62,11 @@ define('PROJECT_PUBLIC', './../../../public');
                         <a class="nav-link active" href="/nova-noticia">Nova Noticia</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/">Lista de Noticias</a>
+                        <a class="nav-link" href="/">Lista de Filmes</a>
                     </li>
 
                     <li class="nav-item">
-                        <a class="nav-link" href="/logout">Sair</a>
+                        <a class="nav-link" onclick="logout();">Sair</a>
                     </li>
                 </ul>
             <?php endif; ?>

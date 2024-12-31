@@ -33,7 +33,7 @@ class FilmsAPI implements FilmsInterface
             }
         
             $catalog->addFilm(new FilmDTO(
-                $movie['properties']['uid'] ?? '1',
+                $movie['uid'] ?? '1',
                 $movie['properties']['title'] ?? 'Título não disponível',
                 $movie['properties']['episode_id'] ?? 0,
                 $movie['properties']['opening_crawl'] ?? '',

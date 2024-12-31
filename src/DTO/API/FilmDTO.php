@@ -2,7 +2,9 @@
 
 namespace StarWars\DTO\API;
 
-class FilmDTO 
+use JsonSerializable;
+
+class FilmDTO implements JsonSerializable
 {
     private int $id;
     private string $title;
@@ -89,12 +91,12 @@ class FilmDTO
         return $this->isOnDatabase;
     }
 
-    public function getFilmImage(): string
+    public function getCover(): string
     {
-        return '../../public/films/' . $this->getId() . '.jpg';
+        return '../../public/img/films/' . $this->getId() . '.jpg';
     }
 
-    public function toArray(): array
+    public function jsonSerialize(): array
     {
         return [
             'id' => $this->getId(),
@@ -106,6 +108,7 @@ class FilmDTO
             'producers' => $this->getProducers(),
             'characters' => $this->getCharacters(),
             'isFavorite' => $this->isFavorite(),
+            'cover' => $this->getCover(),
             'isOnDatabase' => $this->isOnDatabase()
         ];
     }

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Seminario\Mvc\Controller\Error404Controller;
+use StarWars\Controller\Error\Error404Controller;
 
 date_default_timezone_set('America/Sao_Paulo');
 
@@ -18,13 +18,14 @@ $pathInfo = $_SERVER['PATH_INFO'] ?? '/';
 $httpMethod = $_SERVER['REQUEST_METHOD'];
 session_start();
 session_regenerate_id();
-$isLoginRoute = $pathInfo === '/login';
+$isLoginRoute = $pathInfo === '/pages/internal/login';
 $isCreateAccountRoute = $pathInfo === '/create-account';
 
 if (!array_key_exists('logged', $_SESSION) && !$isLoginRoute && !$isCreateAccountRoute) {
-    header('Location: /login');
+    header('Location: /pages/internal/login');
     return;
 }
+
 
 $key = "$httpMethod|$pathInfo";
 if (array_key_exists($key, $routes)) {

@@ -4,12 +4,12 @@ namespace StarWars\DTO\API;
 
 use StarWars\DTO\API\FilmDTO;
 
-class CatalogDTO 
+class CatalogDTO implements \JsonSerializable
 {
     /**
      * @var FilmDTO[] 
      */
-    private array $films;
+    private array $films = [];
 
     public function addFilm(FilmDTO $film): void
     {
@@ -23,4 +23,13 @@ class CatalogDTO
     {
         return $this->films;
     }
+
+    public function jsonSerialize(): array
+    {
+        return [
+            'films' => $this->films
+        ];
+    }
+
+
 }

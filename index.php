@@ -37,27 +37,25 @@ $loggedInMiddleware = function ($request, $handler): ResponseInterface {
     $route = $routeContext->getRoute();
 
     if (empty($route)) {
-        throw new HttpNotFoundException($request, $response);
+        throw new HttpNotFoundException($request);
     }
 
     $routeName = $route->getName();
 
-    $publicRoutesArray = array('', 'login');
+    $publicRoutesArray = array('', 'pages/login', 'pages/create-account');
 
     if (empty($_SESSION['user']) && (!in_array($routeName, $publicRoutesArray))) {
         $routeParser = $routeContext->getRouteParser();
-        $url = $routeParser->urlFor('login');
+        $url = $routeParser->urlFor('pages/login');
 
-        $response = new \Slim\Psr7\Response();
-
-        return $response->withStatus(401);
-        // return $response->withHeader('Location', $url)->withStatus(302);
+        return (new \Slim\Psr7\Response())
+            ->withHeader('Location', $url)
+            ->withStatus(302);
     } else {
-        $response = $handler->handle($request);
-
-        return $response;
+        return $handler->handle($request);
     }
 };
+
 $app->add($loggedInMiddleware);
 $app->addRoutingMiddleware();
 

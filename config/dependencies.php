@@ -6,9 +6,11 @@ use Monolog\Logger;
 use Monolog\Processor\UidProcessor;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
+use StarWars\Middleware\AuthMiddleware;
 use StarWars\UseCases\Account\GetAccountByEmailCase;
 use StarWars\UseCases\Auth\AccountLoginCase;
 use StarWars\Repository\Account\AccountRepository;
+use StarWars\Service\Auth\AuthService;
 use StarWars\Service\Connection\ConnectionInterface;
 use StarWars\Service\Connection\CurlConnection;
 use StarWars\Service\StarwarsAPI\Films\FilmsAPI;
@@ -73,6 +75,10 @@ return function (ContainerBuilder $containerBuilder) {
 
         GetFilmCase::class => function (ContainerInterface $c) {
             return new GetFilmCase($c->get(FilmsInterface::class));
+        },
+
+        AuthMiddleware::class => function (ContainerInterface $c) {
+            return new AuthMiddleware($c->get(GetAccountByEmailCase::class), $c, $c->get(LoggerInterface::class), $c->get(AuthService::class));
         }
     ]);
     
