@@ -9,10 +9,10 @@ require_once __DIR__ . './../template/ini-html.php';
 
 <body class="login-page sidebar-collapse">
     <div class="page-header clear-filter" filter-color="orange">
-        <button id="startButton" class="start-button" onclick="startFilm();">Iniciar</button>
+        <button id="startButton" class="start-button" onclick="startFilm();" disabled>Aguarde...</button>
         
         <main id="main-content" style="display: none;">
-            <canvas id="field"></canvas>
+            <canvas id="canvas"></canvas>
             <div id="crawl">
                 <p id="movieData">
                     <span id="episode-name"></span>

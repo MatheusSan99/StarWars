@@ -11,7 +11,7 @@ main {
     height: 100vh;
 }
 
-#field {
+#canvas {
     position: fixed;
     top: 0;
     right: 0;
