@@ -37,8 +37,15 @@ class FilmDTO implements JsonSerializable
         $this->release_date = $release_date;
         $this->director = $director;
         $this->producers = $producers;
-        $this->characters = $characters;
+        $this->setCharacters($characters);
         $this->isFavorite = $isFavorite;
+    }
+
+    private function setCharacters(array $characters): void
+    {
+        $this->characters = array_map(function ($character) {
+            return (int)str_replace('https://www.swapi.tech/api/people/', '', $character);
+        }, $characters);
     }
 
     public function getId(): int

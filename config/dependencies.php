@@ -13,9 +13,13 @@ use StarWars\Repository\Account\AccountRepository;
 use StarWars\Service\Auth\AuthService;
 use StarWars\Service\Connection\ConnectionInterface;
 use StarWars\Service\Connection\CurlConnection;
+use StarWars\Service\StarwarsAPI\Characters\CharactersAPI;
+use StarWars\Service\StarwarsAPI\Characters\CharactersInterface;
 use StarWars\Service\StarwarsAPI\Films\FilmsAPI;
 use StarWars\Service\StarwarsAPI\Films\FilmsInterface;
 use StarWars\UseCases\API\GetCatalogCase;
+use StarWars\UseCases\API\GetCharacterCase;
+use StarWars\UseCases\API\GetCharactersListCase;
 use StarWars\UseCases\API\GetFilmCase;
 
 return function (ContainerBuilder $containerBuilder) {
@@ -56,6 +60,9 @@ return function (ContainerBuilder $containerBuilder) {
         FilmsInterface::class => function (ContainerInterface $c) {
             return new FilmsAPI($c->get(ConnectionInterface::class));
         },
+        CharactersInterface::class => function (ContainerInterface $c) {
+            return new CharactersAPI($c->get(ConnectionInterface::class));
+        },
 
         AccountRepository::class => function (ContainerInterface $c) {
             return new AccountRepository($c->get(PDO::class));
@@ -75,6 +82,14 @@ return function (ContainerBuilder $containerBuilder) {
 
         GetFilmCase::class => function (ContainerInterface $c) {
             return new GetFilmCase($c->get(FilmsInterface::class));
+        },
+
+        GetCharactersListCase::class => function (ContainerInterface $c) {
+            return new GetCharactersListCase($c->get(CharactersInterface::class));
+        },
+
+        GetCharacterCase::class => function (ContainerInterface $c) {
+            return new GetCharacterCase($c->get(CharactersInterface::class));
         },
 
         AuthMiddleware::class => function (ContainerInterface $c) {

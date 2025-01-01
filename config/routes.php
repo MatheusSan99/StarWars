@@ -4,14 +4,15 @@ use StarWars\Controller\{
     Auth\LoginController,
     Auth\LogoutController,
     Account\NewAccountController,
-    Catalog\CatalogController
+    Catalog\CatalogController,
+    Film\FilmController,
+    Characters\CharactersController
 };
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Slim\App;
 use Slim\Psr7\Factory\ResponseFactory;
 use Slim\Routing\RouteCollectorProxy;
-use StarWars\Controller\Film\FilmController;
 use StarWars\Middleware\AuthMiddleware;
 
 return function (App $app) {
@@ -27,7 +28,13 @@ return function (App $app) {
         $app->get('/login', LoginController::class . ':loginForm');
         $app->get('/create-account', [NewAccountController::class, 'createAccount']);
         $app->get('/catalog', CatalogController::class . ':catalogPage')->add($app->getContainer()->get(AuthMiddleware::class));
-        $app->get('/film', FilmController::class . ':getFilmPage')->add($app->getContainer()->get(AuthMiddleware::class));
+
+        $app->group('/film', function (RouteCollectorProxy $app) {
+            $app->get('', FilmController::class . ':getFilmPage');
+            $app->get('/{filmId}/characters', CharactersController::class . ':getCharactersPage');
+            $app->get('/{filmId}/characters/{characterId}', CharactersController::class . ':getCharacterPage');
+        })->add($app->getContainer()->get(AuthMiddleware::class));
+
     });
 
     $app->group('/api', function (RouteCollectorProxy $app) {
@@ -39,7 +46,9 @@ return function (App $app) {
     
         $app->group('/external', function (RouteCollectorProxy $app) {
             $app->get('/catalog', CatalogController::class . ':getCatalog'); 
-            $app->get('/film/{id}', FilmController::class . ':getFilmById');  
+            $app->get('/film/{id}', FilmController::class . ':getFilmById');
+            $app->get('/film/{filmId}/characters', CharactersController::class . ':getCharactersByFilmId');  
+            $app->get('/film/{filmId}/characters/{characterId}', CharactersController::class . ':getCharacterById');
         });
     });
 

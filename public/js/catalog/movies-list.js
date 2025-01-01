@@ -5,8 +5,45 @@ document.addEventListener("DOMContentLoaded", async function () {
   searchInput.addEventListener("keyup", searchMovieFromCatalog);
 });
 
+async function cacheCatalog(catalog) {
+  const cacheKey = "film-catalog";
+  const cacheData = {
+    catalog: catalog,
+    timestamp: Date.now(),
+  };
+  localStorage.setItem(cacheKey, JSON.stringify(cacheData));
+}
+
+async function getCachedCatalog() {
+  const cacheKey = "film-catalog";
+  const cacheData = localStorage.getItem(cacheKey);
+
+  if (!cacheData) {
+    return null;
+  }
+
+  const { catalog, timestamp } = JSON.parse(cacheData);
+
+  const cacheValidity = 60 * 60 * 24;
+  const now = Date.now();
+
+  if (now - timestamp > cacheValidity) {
+    localStorage.removeItem(cacheKey);
+    return null;
+  }
+
+  return catalog;
+}
+
 async function loadCatalog() {
   const host = window.location.origin;
+
+  const cachedCatalog = await getCachedCatalog();
+
+  if (cachedCatalog) {
+    await buildCatalogTable(cachedCatalog);
+    return;
+  }
 
   try {
     const response = await fetch(`${host}/api/external/catalog`);
@@ -16,6 +53,9 @@ async function loadCatalog() {
     }
 
     const catalog = await response.json();
+
+    await cacheCatalog(catalog);
+
     await buildCatalogTable(catalog);
   } catch (error) {
     console.error("Failed to load catalog:", error);
@@ -93,7 +133,7 @@ function addSortingFeature(th, theadRow) {
 
     sortIcon.classList.toggle("fa-sort-up", isAscending);
     sortIcon.classList.toggle("fa-sort-down", !isAscending);
-    sortIcon.classList.remove("fa-sort", false); 
+    sortIcon.classList.remove("fa-sort", false);
 
     sortTable(columnIndex, newOrder);
   });
@@ -112,7 +152,7 @@ function buildFilmRow(film) {
       ])
     )
   );
-  
+
   tr.appendChild(createFilmCoverCell(film));
   tr.appendChild(createTableCell(film.title));
   tr.appendChild(createTableCell(film.director));
@@ -120,7 +160,7 @@ function buildFilmRow(film) {
   tr.appendChild(createTableCell(film.producers));
   tr.appendChild(
     createTableCell(
-      createActionButton(`caracthers-list?id=${film.id}`, "Visualizar", [
+      createActionButton(`film/${film.id}/characters`, "Visualizar", [
         "btn",
         "btn-info",
         "btn-round",
@@ -218,19 +258,19 @@ function createFilmCoverCell(film) {
 
   img.src = film.cover;
   img.alt = film.title;
-  img.width = 150; 
-  img.height = 120; 
+  img.width = 150;
+  img.height = 120;
 
-  img.style.transition = 'transform 0.3s ease, box-shadow 0.3s ease'; 
+  img.style.transition = "transform 0.3s ease, box-shadow 0.3s ease";
 
-  img.addEventListener('mouseover', () => {
-    img.style.transform = 'scale(1.2)';  
-    img.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.3)'; 
+  img.addEventListener("mouseover", () => {
+    img.style.transform = "scale(1.2)";
+    img.style.boxShadow = "0 4px 8px rgba(0, 0, 0, 0.3)";
   });
 
-  img.addEventListener('mouseout', () => {
-    img.style.transform = 'scale(1)';  
-    img.style.boxShadow = 'none';  
+  img.addEventListener("mouseout", () => {
+    img.style.transform = "scale(1)";
+    img.style.boxShadow = "none";
   });
 
   td.appendChild(img);
