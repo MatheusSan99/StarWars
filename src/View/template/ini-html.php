@@ -33,7 +33,7 @@ define('PROJECT_PUBLIC', './../../../public');
     <?php else: ?>
         <title>Star Wars</title>
     <?php endif; ?>
-    <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="<?php echo PROJECT_PUBLIC; ?>/img/icons/dark.png" type="image/x-icon">
 </head>
 
 <body>
@@ -62,7 +62,7 @@ define('PROJECT_PUBLIC', './../../../public');
                         <a class="nav-link active" href="/nova-noticia">Nova Noticia</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/">Lista de Filmes</a>
+                        <a class="nav-link" href="/pages/catalog">Lista de Filmes</a>
                     </li>
 
                     <li class="nav-item">
