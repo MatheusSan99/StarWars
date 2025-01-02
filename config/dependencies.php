@@ -6,6 +6,7 @@ use Monolog\Logger;
 use Monolog\Processor\UidProcessor;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
+use StarWars\Helper\PdoLogHandler;
 use StarWars\Middleware\AuthMiddleware;
 use StarWars\UseCases\Account\GetAccountByEmailCase;
 use StarWars\UseCases\Auth\AccountLoginCase;
@@ -24,21 +25,6 @@ use StarWars\UseCases\API\GetFilmCase;
 
 return function (ContainerBuilder $containerBuilder) {
     $containerBuilder->addDefinitions([
-        LoggerInterface::class => function (ContainerInterface $c) {
-            $loggerSettings = $c->get('settings')['logger'];
-            $logger = new Logger($loggerSettings['name']);
-
-            $processor = new UidProcessor();
-            $logger->pushProcessor($processor);
-
-            $handler = new StreamHandler($loggerSettings['path'], $loggerSettings['level']);
-            $logger->pushHandler($handler);
-
-            return $logger;
-        }
-    ]);
-
-    $containerBuilder->addDefinitions([
         PDO::class => function (ContainerInterface $c) {
             $dbPath = __DIR__ . './../database/database.sqlite';
             $dsn = 'sqlite:' . $dbPath;
@@ -55,6 +41,19 @@ return function (ContainerBuilder $containerBuilder) {
     
             return $pdo;
         },
+        LoggerInterface::class => function (ContainerInterface $c) {
+            $loggerSettings = $c->get('settings')['logger'];
+            $logger = new Logger($loggerSettings['name']);
+
+            $processor = new UidProcessor();
+            $logger->pushProcessor($processor);
+
+            // $handler = new StreamHandler($loggerSettings['path'], $loggerSettings['level']); // log em arquivo
+            $handler = new PdoLogHandler($c->get(PDO::class), $loggerSettings['level']); // log em banco de dados
+            $logger->pushHandler($handler);
+
+            return $logger;
+        },
         
         ConnectionInterface::class => \DI\create(CurlConnection::class),
         FilmsInterface::class => function (ContainerInterface $c) {
@@ -69,7 +68,7 @@ return function (ContainerBuilder $containerBuilder) {
         },
 
         AccountLoginCase::class => function (ContainerInterface $c) {
-            return new AccountLoginCase($c->get(AccountRepository::class));
+            return new AccountLoginCase($c->get(AccountRepository::class), $c->get(LoggerInterface::class), $c->get(AuthService::class));
         },
 
         GetAccountByEmailCase::class => function (ContainerInterface $c) {
@@ -93,9 +92,7 @@ return function (ContainerBuilder $containerBuilder) {
         },
 
         AuthMiddleware::class => function (ContainerInterface $c) {
-            return new AuthMiddleware($c->get(GetAccountByEmailCase::class), $c, $c->get(LoggerInterface::class), $c->get(AuthService::class));
+            return new AuthMiddleware($c->get(GetAccountByEmailCase::class), $c->get(LoggerInterface::class), $c->get(AuthService::class));
         }
     ]);
-    
-    
 };

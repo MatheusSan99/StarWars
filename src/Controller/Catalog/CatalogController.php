@@ -4,7 +4,6 @@ namespace StarWars\Controller\Catalog;
 
 use Nyholm\Psr7\Response as Psr7Response;
 use Psr\Container\ContainerInterface;
-use Psr\Http\Message\ResponseInterface;
 use StarWars\UseCases\API\GetCatalogCase;
 use Psr\Http\Message\ServerRequestInterface;
 use Slim\Psr7\Response;

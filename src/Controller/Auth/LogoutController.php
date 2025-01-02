@@ -6,30 +6,26 @@ namespace StarWars\Controller\Auth;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Psr\Log\LoggerInterface;
 use Slim\Psr7\Response;
 use StarWars\Helper\FlashMessageTrait;
+use StarWars\UseCases\Auth\LogoutCase;
 
 class LogoutController
 {
     use FlashMessageTrait;
-    private LoggerInterface $logger;
+
+    private LogoutCase $LogoutCase;
     
-    public function __construct(LoggerInterface $logger)
+    public function __construct(LogoutCase $LogoutCase)
     {
-        $this->logger = $logger;
+        $this->LogoutCase = $LogoutCase;
     }
 
     public function logout(ServerRequestInterface $request, Response $response, array $args): ResponseInterface
     {
-        setcookie('auth_token', '', time() - 43200, '/', '', true, true); 
-        session_destroy();
+        $message = $this->LogoutCase->execute();
 
-        $this->logger->info('Usuário deslogado com sucesso');
-
-        $this->addSuccessMessage('Usuário deslogado com sucesso');
-
-        $response->getBody()->write(json_encode(['message' => 'Usuário deslogado com sucesso']));
+        $response->getBody()->write(json_encode(['message' => $message]));
 
         return $response;
     }

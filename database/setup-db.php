@@ -18,18 +18,17 @@ chmod($dbDir, 0777);
 
 $pdo = new PDO("sqlite:$dbPath");
 
-$createAccountsTable = '
-    CREATE TABLE IF NOT EXISTS accounts (
+$createAccountsTable = 
+    'CREATE TABLE IF NOT EXISTS accounts (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT NOT NULL,
         email TEXT NOT NULL UNIQUE,
         password TEXT NOT NULL,
         role TEXT NOT NULL
-    );
-';
+    );';
 
-$createMovieTable = '
-    CREATE TABLE IF NOT EXISTS movies (
+$createMovieTable = 
+    'CREATE TABLE IF NOT EXISTS movies (
         id INTEGER PRIMARY KEY,
         title TEXT NOT NULL,
         episode_id INTEGER NOT NULL,
@@ -38,21 +37,19 @@ $createMovieTable = '
         director TEXT NOT NULL,
         producers TEXT NOT NULL,
         characters TEXT NOT NULL,
-    );
-';
+    );';
 
-$createCharactersTable = '
-    CREATE TABLE IF NOT EXISTS characters (
+$createCharactersTable = 
+    'CREATE TABLE IF NOT EXISTS characters (
         id INTEGER PRIMARY KEY,
         name TEXT NOT NULL,
         birth_year TEXT NOT NULL,
         starships TEXT NOT NULL,
         vehicles TEXT NOT NULL,
-    );
-';
+    );';
 
-$createStarshipsTable = '
-    CREATE TABLE IF NOT EXISTS starships (
+$createStarshipsTable = 
+    'CREATE TABLE IF NOT EXISTS starships (
         id INTEGER PRIMARY KEY,
         name TEXT NOT NULL,
         model TEXT NOT NULL,
@@ -67,13 +64,22 @@ $createStarshipsTable = '
         MGLT TEXT NOT NULL,
         cargo_capacity TEXT NOT NULL,
         consumables TEXT NOT NULL
-    );
-';
+    );';
+
+$createLogTable =
+    'CREATE TABLE IF NOT EXISTS monolog (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        channel TEXT NOT NULL,
+        level INTEGER NOT NULL,
+        message TEXT NOT NULL,
+        time INTEGER NOT NULL
+    );';
 
 $pdo->exec($createAccountsTable);
 $pdo->exec($createMovieTable);
 $pdo->exec($createCharactersTable);
 $pdo->exec($createStarshipsTable);
+$pdo->exec($createLogTable);
 
 $checkUserAdmin = 'SELECT * FROM accounts WHERE email = "admin@gmail.com";';
 

@@ -2,9 +2,6 @@
 
 namespace StarWars\Middleware;
 
-use Firebase\JWT\JWT;
-use Monolog\Logger;
-use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -17,14 +14,12 @@ use StarWars\UseCases\Account\GetAccountByEmailCase;
 class AuthMiddleware implements MiddlewareInterface
 {
     private GetAccountByEmailCase $GetAccountByTokenCase;
-    private ContainerInterface $container;
     private LoggerInterface $logger;
     private AuthService $AuthService;
 
-    public function __construct(GetAccountByEmailCase $GetAccountByTokenCase, ContainerInterface $containerInterface, LoggerInterface $logger, AuthService $AuthService)
+    public function __construct(GetAccountByEmailCase $GetAccountByTokenCase,LoggerInterface $logger, AuthService $AuthService)
     {
         $this->GetAccountByTokenCase = $GetAccountByTokenCase;
-        $this->container = $containerInterface;
         $this->logger = $logger;
         $this->AuthService = $AuthService;
     }

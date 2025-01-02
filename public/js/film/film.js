@@ -250,9 +250,13 @@ function displayMovieInfo() {
     <p><strong>Sinopse:</strong> ${film.opening_crawl}</p>
     <p><strong>Data de Lançamento:</strong> ${film.release_date}</p>
     <p><strong>Diretor:</strong> ${film.director}</p>
-    <p><strong>Produtores:</strong> ${film.producers}</p>`;
-
-  movieInfoContainer.style.display = "flex";
+    <p><strong>Produtores:</strong> ${film.producers}</p>
+    <p><strong>Idade Do Filme:</strong> ${film.complete_age}</p>
+    <p><strong>Idade Em Anos:</strong> ${film.age_in_years}</p>
+    <p><strong>Idade Em Meses:</strong> ${film.age_in_months}</p>
+    <p><strong>Idade Em Dias:</strong> ${film.age_in_days}</p>`;
+    
+    movieInfoContainer.style.display = "flex";
 }
 
 function resetStartButton() {

@@ -5,26 +5,25 @@ declare(strict_types=1);
 namespace StarWars\Controller\Account;
 
 use Nyholm\Psr7\Response;
-use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Log\LoggerInterface;
+use StarWars\Exceptions\Auth\RegisterException;
 use StarWars\UseCases\Account\CreateNewAccountCase;
 use StarWars\Helper\FlashMessageTrait;
 use StarWars\Helper\HtmlRendererTrait;
-use StarWars\Repository\Account\AccountRepository;
 
 class NewAccountController
 {
     use HtmlRendererTrait;
     use FlashMessageTrait;
 
-    private ContainerInterface $container;
+    private CreateNewAccountCase $CreateNewAccount;
     private LoggerInterface $logger;
 
-    public function __construct(ContainerInterface $container, LoggerInterface $logger)
+    public function __construct(CreateNewAccountCase $CreateNewAccount, LoggerInterface $logger)
     {
-        $this->container = $container;
+        $this->CreateNewAccount = $CreateNewAccount;
         $this->logger = $logger;
     }
 
@@ -44,24 +43,23 @@ class NewAccountController
         $password = filter_input(INPUT_POST, 'password');
 
         if (!$name || !$email || !$password) {
-            $this->logger->warning('Todos os campos são obrigatórios', ['email' => $email, 'name' => $name]);
-            $this->addErrorMessage('Todos os campos são obrigatórios');
+            $this->logger->warning(RegisterException::REQUIRED_FIELDS, ['email' => $email, 'name' => $name]);
+            $this->addErrorMessage(RegisterException::REQUIRED_FIELDS);
             
             return new Response(302, ['Location' => '/pages/create-account']);
         }
-
-        $createNewAccount = new CreateNewAccountCase($this->container->get(AccountRepository::class));
 
         try {
-            $createNewAccount->execute($name, $email, $password);
+            $this->CreateNewAccount->execute($name, $email, $password);
         } catch (\Exception $e) {
-            $this->logger->error('Erro ao criar conta: ' . $e->getMessage(), ['email' => $email, 'name' => $name]);
+            $this->logger->error(RegisterException::UNKNOW_ERROR . $e->getMessage(), ['email' => $email, 'name' => $name]);
 
-            $this->addErrorMessage('Erro ao criar conta, tente novamente com um email diferente');
+            $this->addErrorMessage(RegisterException::UNKNOW_ERROR . $e->getMessage());
             
             return new Response(302, ['Location' => '/pages/create-account']);
         }
 
+        $this->logger->info('Conta criada com sucesso', ['email' => $email, 'name' => $name]);
         $this->addSuccessMessage('Conta criada com sucesso, redirecionando para a página de login');
 
         return new Response(302, ['Location' => '/pages/login']);

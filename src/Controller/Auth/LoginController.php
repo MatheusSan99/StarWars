@@ -15,7 +15,7 @@ use StarWars\UseCases\API\GetCatalogCase;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Slim\Psr7\Response as Psr7Response;
-use StarWars\Exceptions\Auth\AuthenticationException;
+use StarWars\Service\Auth\AuthService;
 
 class LoginController
 {
@@ -26,13 +26,15 @@ class LoginController
     private GetAccountByEmailCase $GetAccountByEmailCase;
     private AccountLoginCase $AccountLoginCase;
     private GetCatalogCase $GetCatalogCase;
+    private AuthService $AuthService;
 
-    public function __construct(LoggerInterface $logger, GetAccountByEmailCase $GetAccountByEmailCase, AccountLoginCase $AccountLoginCase, GetCatalogCase $GetCatalogCase)
+    public function __construct(LoggerInterface $logger, GetAccountByEmailCase $GetAccountByEmailCase, AccountLoginCase $AccountLoginCase, GetCatalogCase $GetCatalogCase, AuthService $AuthService)
     {
         $this->logger = $logger;
         $this->GetAccountByEmailCase = $GetAccountByEmailCase;
         $this->AccountLoginCase = $AccountLoginCase;
         $this->GetCatalogCase = $GetCatalogCase;
+        $this->AuthService = $AuthService;
     }
 
     public function loginForm(): ResponseInterface
@@ -57,21 +59,11 @@ class LoginController
     
         try {
             $Account = $this->GetAccountByEmailCase->execute($email);
-            $token = $this->AccountLoginCase->execute($Account->getEmail(), $password);
+            $AccountModel = $this->AccountLoginCase->execute($Account->getEmail(), $password);
 
-            $_SESSION['logged'] = true;
-    
+            $token = $this->AuthService->generateToken($AccountModel);
             $expirationTime = time() + 43200; 
-    
-            setcookie(
-                'auth_token',     
-                $token,         
-                $expirationTime,  
-                '/',            
-                '',               
-                true,             
-                true             
-            );
+            $this->AuthService->setTokenData($token, $expirationTime, $AccountModel);
     
             $this->logger->info('Usuário logado', ['email' => $email]);
 

@@ -103,6 +103,41 @@ class FilmDTO implements JsonSerializable
         return '../../public/img/films/' . $this->getId() . '.jpg';
     }
 
+    public function ageInYears(): int
+    {
+        $releaseDate = new \DateTime($this->getReleaseDate());
+        $currentDate = new \DateTime();
+        $diff = $currentDate->diff($releaseDate);
+        return $diff->y;
+    }
+
+    public function ageInMonths(): int
+    {
+        $releaseDate = new \DateTime($this->getReleaseDate());
+        $currentDate = new \DateTime();
+        $diff = $currentDate->diff($releaseDate);
+    
+        return ($diff->y * 12) + $diff->m;
+    }
+    
+    public function ageInDays(): int
+    {
+        $releaseDate = new \DateTime($this->getReleaseDate());
+        $currentDate = new \DateTime();
+        $interval = $releaseDate->diff($currentDate);
+    
+        return (int)$releaseDate->diff($currentDate)->format('%a');
+    }
+    
+    public function completeAge(): string
+    {
+        $years = $this->ageInYears();
+        $months = $this->ageInMonths();
+        $days = $this->ageInDays();
+
+        return "{$years} anos, {$months} meses e {$days} dias";
+    }
+
     public function jsonSerialize(): array
     {
         return [
@@ -116,7 +151,11 @@ class FilmDTO implements JsonSerializable
             'characters' => $this->getCharacters(),
             'isFavorite' => $this->isFavorite(),
             'cover' => $this->getCover(),
-            'isOnDatabase' => $this->isOnDatabase()
+            'isOnDatabase' => $this->isOnDatabase(),
+            'complete_age' => $this->completeAge(),
+            'age_in_years' => $this->ageInYears(),
+            'age_in_months' => $this->ageInMonths(),
+            'age_in_days' => $this->ageInDays()
         ];
     }
 }
