@@ -6,11 +6,12 @@ let starIndex;
 let numStars;
 let acceleration;
 let starsToDraw;
+let film = {};
 
 document.addEventListener("DOMContentLoaded", async function () {
-    await loadFilm();
-    await enableStartBtn();
-    await assignVariables();
+  await loadFilm();
+  await enableStartBtn();
+  await assignVariables();
 });
 
 async function assignVariables() {
@@ -34,6 +35,7 @@ async function loadFilm() {
   const host = window.location.origin;
   const url = new URL(window.location.href);
   const filmId = url.searchParams.get("id");
+  film = {};
 
   try {
     const response = await fetch(`${host}/api/external/film/${filmId}`);
@@ -42,60 +44,75 @@ async function loadFilm() {
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
 
-    const film = await response.json();
-    await buildFilm(film);
+    film = await response.json();
+    await buildFilm();
   } catch (error) {
     console.error("Failed to load film:", error);
   }
 }
 
 function startFilm() {
-    const btn = document.getElementById("startButton");
-    const mainContent = document.getElementById("main-content");
-    const filmAudio = document.getElementById("film-audio");
-  
-    btn.classList.add("hidden");
-  
+  hiddenStartBtn();
+  const mainContent = document.getElementById("main-content");
+  const filmAudio = document.getElementById("film-audio");
+
+  filmAudio.play().catch((error) => {
+    console.error("Erro ao iniciar o áudio:", error);
+  });
+
+  if (f) {
+    resetStars();
+    mainContent.style.display = "block";
+
+    const intervalId = setInterval(draw, 20);
+
     setTimeout(() => {
-      btn.style.visibility = "hidden";
-    }, 2000);
-  
-    filmAudio.play().catch((error) => {
-      console.error("Erro ao iniciar o áudio:", error);
-    });
-  
-    if (f) {
-      resetStars();
-      mainContent.style.display = "block";
-  
-      const intervalId = setInterval(draw, 20);
-  
-      setTimeout(() => { 
-          clearInterval(intervalId); 
-  
-          mainContent.classList.add("fade-out");
-          btn.classList.add("fade-out");
-  
-          setTimeout(() => {
-            mainContent.style.display = "none"; 
-            btn.style.visibility = "visible";
-            btn.classList.remove("hidden");
-            filmAudio.pause();
-            filmAudio.currentTime = 0;
-          }, 2000); 
-      }, filmSeconds * 1000); 
-    }
+      clearInterval(intervalId);
+      finishMovie();
+    }, filmSeconds * 1000);
   }
-  
-async function buildFilm(film) {
+}
+
+function hiddenStartBtn() {
+  const btn = document.getElementById("startButton");
+
+  btn.classList.add("hidden");
+
+  setTimeout(() => {
+    btn.style.visibility = "hidden";
+  });
+}
+
+function finishMovie() {
+  const mainContent = document.getElementById("main-content");
+  const startButton = document.getElementById("startButton");
+  const filmAudio = document.getElementById("film-audio");
+
+  mainContent.classList.add("fade-out");
+  startButton.classList.add("fade-out");
+
+  setTimeout(() => {
+    mainContent.style.display = "none";
+    startButton.style.visibility = "visible";
+    startButton.classList.remove("hidden");
+
+    startButton.classList.add("repositioned");
+
+    filmAudio.pause();
+    filmAudio.currentTime = 0;
+
+    displayMovieInfo();
+  }, 2000);
+}
+
+async function buildFilm() {
   const movieData = document.getElementById("movieData");
-  document.getElementById("episode-name").innerText = await episode(
-    film.episode_id
-  );
+  const episodeTitle = await episode(film.episode_id);
+  document.getElementById("episode-name").innerText = episodeTitle;
 
   const title = document.createElement("p");
   title.id = "title";
-  title.innerText = film.title;
+  title.innerText = episodeTitle;
 
   const openingCrawl = document.createElement("div");
   openingCrawl.id = "opening-crawl";
@@ -221,4 +238,32 @@ function resetStars() {
   numStars = 0;
   acceleration = 1;
   starsToDraw = (canvas.width * canvas.height) / 200;
+}
+
+function displayMovieInfo() {
+  const movieInfoContainer = document.querySelector(".movie-info-container");
+  const movieInfoDiv = document.querySelector(".movie-info");
+
+  movieInfoDiv.innerHTML = `
+    <h2>${film.title}</h2>
+    <p><strong>Episódio:</strong> ${film.episode_id}</p>
+    <p><strong>Sinopse:</strong> ${film.opening_crawl}</p>
+    <p><strong>Data de Lançamento:</strong> ${film.release_date}</p>
+    <p><strong>Diretor:</strong> ${film.director}</p>
+    <p><strong>Produtores:</strong> ${film.producers}</p>`;
+
+  movieInfoContainer.style.display = "flex";
+}
+
+function resetStartButton() {
+  const startButton = document.getElementById("startButton");
+  startButton.classList.remove("repositioned");
+  startButton.style.visibility = "hidden";
+}
+
+function restartMovie() {
+  const movieInfoContainer = document.querySelector(".movie-info-container");
+  movieInfoContainer.style.display = "none";
+
+  startFilm();
 }

@@ -15,8 +15,6 @@ define('PROJECT_PUBLIC', './../../../public');
     <link rel="stylesheet" href="<?php echo PROJECT_PUBLIC; ?>/css/bootstrap.min.css">
     <link rel="stylesheet" href="<?php echo PROJECT_PUBLIC; ?>/css/now-ui-kit.css?v=1.3.0" rel="stylesheet">
     <link rel="stylesheet" href="<?php echo PROJECT_PUBLIC; ?>/css/main.css">
-    <link rel="apple-touch-icon" sizes="76x76" href="<?php echo PROJECT_PUBLIC; ?>/assets/img/apple-icon.png">
-    <link rel="icon" type="image/png" href="<?php echo PROJECT_PUBLIC; ?>/assets/img/favicon.png">
     <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700,200" rel="stylesheet" /> 
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css"
       integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">

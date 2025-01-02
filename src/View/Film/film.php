@@ -10,7 +10,7 @@ require_once __DIR__ . './../template/ini-html.php';
 <body class="login-page sidebar-collapse">
     <div class="page-header clear-filter" filter-color="orange">
         <button id="startButton" class="start-button" onclick="startFilm();" disabled>Aguarde...</button>
-        
+
         <main id="main-content" style="display: none;">
             <canvas id="canvas"></canvas>
             <div id="crawl">
@@ -20,6 +20,14 @@ require_once __DIR__ . './../template/ini-html.php';
             </div>
             <div id="overlay"></div>
         </main>
+
+        <div class="movie-info-container" style="display: none;">
+            <div class="movie-info-card">
+                <div class="movie-info"></div>
+            </div>
+            <button id="restartButton" onclick="restartMovie()">Reiniciar Filme</button>
+        </div>
+
     </div>
 
     <?php require_once __DIR__ . './../template/end-html.php'; ?>
