@@ -48,7 +48,7 @@
                 <button class="btn btn-primary btn-round btn-lg btn-block" type="submit" value="Registrar">Registrar</button>
                 <div class="pull-mid">
                   <h6>
-                    <a href="/login" class="link">Já tem uma conta? Faça login</a>
+                    <a href="/pages/login" class="link">Já tem uma conta? Faça login</a>
                   </h6>
                 </div>
               </div>

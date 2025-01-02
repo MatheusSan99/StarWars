@@ -18,11 +18,11 @@ $pathInfo = $_SERVER['PATH_INFO'] ?? '/';
 $httpMethod = $_SERVER['REQUEST_METHOD'];
 session_start();
 session_regenerate_id();
-$isLoginRoute = $pathInfo === '/pages/internal/login';
-$isCreateAccountRoute = $pathInfo === '/create-account';
+$isLoginRoute = $pathInfo === '/pages/login';
+$isCreateAccountRoute = $pathInfo === '/pages/create-account';
 
 if (!array_key_exists('logged', $_SESSION) && !$isLoginRoute && !$isCreateAccountRoute) {
-    header('Location: /pages/internal/login');
+    header('Location: /pages/login');
     return;
 }
 

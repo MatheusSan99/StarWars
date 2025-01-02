@@ -32,7 +32,7 @@
                 <button class="btn btn-primary btn-round btn-lg btn-block" type="button" value="Entrar" onclick="login();">Logar</button>
                 <div class="pull-mid">
                   <h6>
-                    <a href="/create-account" class="link">Criar Conta</a>
+                    <a href="/pages/create-account" class="link">Criar Conta</a>
                   </h6>
                 </div>
             </form>

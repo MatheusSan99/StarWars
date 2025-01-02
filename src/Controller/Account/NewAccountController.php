@@ -47,7 +47,7 @@ class NewAccountController
             $this->logger->warning('Todos os campos são obrigatórios', ['email' => $email, 'name' => $name]);
             $this->addErrorMessage('Todos os campos são obrigatórios');
             
-            return new Response(302, ['Location' => '/create-account']);
+            return new Response(302, ['Location' => '/pages/create-account']);
         }
 
         $createNewAccount = new CreateNewAccountCase($this->container->get(AccountRepository::class));
@@ -59,11 +59,11 @@ class NewAccountController
 
             $this->addErrorMessage('Erro ao criar conta, tente novamente com um email diferente');
             
-            return new Response(302, ['Location' => '/create-account']);
+            return new Response(302, ['Location' => '/pages/create-account']);
         }
 
         $this->addSuccessMessage('Conta criada com sucesso, redirecionando para a página de login');
 
-        return new Response(302, ['Location' => '/login']);
+        return new Response(302, ['Location' => '/pages/login']);
     }
 }
