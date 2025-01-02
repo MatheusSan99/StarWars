@@ -1,7 +1,6 @@
 <?php
 
 use DI\ContainerBuilder;
-use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 use Monolog\Processor\UidProcessor;
 use Psr\Container\ContainerInterface;
@@ -54,7 +53,7 @@ return function (ContainerBuilder $containerBuilder) {
 
             return $logger;
         },
-        
+
         ConnectionInterface::class => \DI\create(CurlConnection::class),
         FilmsInterface::class => function (ContainerInterface $c) {
             return new FilmsAPI($c->get(ConnectionInterface::class));

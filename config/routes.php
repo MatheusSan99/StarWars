@@ -1,5 +1,6 @@
 <?php
 
+use Nyholm\Psr7\Response;
 use StarWars\Controller\{
     Auth\LoginController,
     Auth\LogoutController,
@@ -11,7 +12,6 @@ use StarWars\Controller\{
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Slim\App;
-use Slim\Psr7\Factory\ResponseFactory;
 use Slim\Routing\RouteCollectorProxy;
 use StarWars\Middleware\AuthMiddleware;
 
@@ -53,10 +53,8 @@ return function (App $app) {
     });
 
     $app->map(['GET', 'POST', 'PUT', 'DELETE', 'PATCH'], '/{routes:.+}', function () use ($app) {
-        $responseFactory = new ResponseFactory();
-        $response = $responseFactory->createResponse(404, 'Página não existe ou não foi encontrada');
-        $response = $response->withHeader('Content-Type', 'application/json');
-        $response->getBody()->write(json_encode(['error' => 'A página solicitada não existe ou não foi encontrada.']));
-        return $response;
+        ob_start();
+        require_once __DIR__ . '/../src/View/Error/not-found.php';
+        return new Response(404, [], ob_get_clean());
     });
 };
