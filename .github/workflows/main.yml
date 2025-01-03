@@ -16,10 +16,28 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      - name: Setup Composer Cache
+        uses: actions/cache@v3
+        with:
+          path: ~/.composer/cache
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.json', '**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-
+
+      - name: Install PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '7.4'
+
+      - name: Install PHPUnit
+        run: composer require --dev phpunit/phpunit
+
       - name: Build Docker Image
         run: |
           docker build --no-cache -t starwars .
 
-      - name: Run PHPUnit Tests in Docker
-        run: |
-          docker run --rm starwars vendor/bin/phpunit --configuration phpunit.xml
+      - uses: php-actions/phpunit@v3
+        with:
+          php_version: '7.4'
+          working-directory: ./tests
+  
