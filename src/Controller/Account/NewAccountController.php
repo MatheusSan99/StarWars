@@ -31,7 +31,7 @@ class NewAccountController
     public function createAccountPage(ServerRequestInterface $request): ResponseInterface
     {
         $html = $this->renderTemplate('Auth/create-account', [
-            'titulo' => 'Criar Conta'
+            'title' => 'Criar Conta'
         ]);
 
         return new Response(200, [], $html);

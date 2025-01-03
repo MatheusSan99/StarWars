@@ -1,5 +1,7 @@
 document.addEventListener("DOMContentLoaded", async function () {
+  enableLoadingGif();
   await loadCatalog();
+  disableLoadingGif();
   const searchInput = document.getElementById("search-movie");
 
   searchInput.addEventListener("keyup", searchMovieFromCatalog);

@@ -1,7 +1,7 @@
 <?php require_once __DIR__ . './../template/ini-html.php'; ?>
 <!DOCTYPE html>
 
-<body class="login-page sidebar-collapse" id="body-register">
+<div class="login-page sidebar-collapse" id="body-register">
   <div class="page-header clear-filter" filter-color="orange">
     <div class="page-header-image"></div>
     <div class="content">
@@ -16,7 +16,7 @@
                       <i class="now-ui-icons users_circle-08"></i>
                     </span>
                   </div>
-                  <input type="text" name="name" class="form-control" placeholder="Insira seu nome">
+                  <input type="text" id="name" name="name" class="form-control" placeholder="Insira seu nome">
                 </div>
                 <div class="input-group no-border input-lg">
                   <div class="input-group-prepend">
@@ -24,7 +24,7 @@
                       <i class="now-ui-icons ui-1_email-85"></i>
                     </span>
                   </div>
-                  <input type="email" name="email" class="form-control" placeholder="Insira seu e-mail">
+                  <input type="email" name="email" id="email" class="form-control" placeholder="Insira seu e-mail">
                 </div>
                 <div class="input-group no-border input-lg">
                   <div class="input-group-prepend">
@@ -32,7 +32,7 @@
                       <i class="now-ui-icons ui-1_lock-circle-open"></i>
                     </span>
                   </div>
-                  <input type="password" name="password" class="form-control" placeholder="Digite sua senha">
+                  <input type="password" name="password" id="password" class="form-control" placeholder="Digite sua senha">
                 </div>
                 <div class="input-group no-border input-lg">
                   <div class="input-group-prepend">
@@ -40,7 +40,7 @@
                       <i class="now-ui-icons ui-1_lock-circle-open"></i>
                     </span>
                   </div>
-                  <input type="password" name="confirm_password" class="form-control" placeholder="Confirme sua senha">
+                  <input type="password" name="confirm_password" id="confirm_password" class="form-control" placeholder="Confirme sua senha">
                 </div>
               </div>
               <div class="card-footer text-center">
@@ -57,4 +57,6 @@
       </div>
     </div>
   </div>
+</div>
+  <script src="<?php echo PROJECT_PUBLIC; ?>/js/account/create-account.js"></script>
   <?php require_once __DIR__ . './../template/end-html.php'; ?>

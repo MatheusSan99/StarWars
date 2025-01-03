@@ -1,5 +1,7 @@
 document.addEventListener("DOMContentLoaded", async function () {
+    enableLoadingGif();
     await loadCharacters();
+    disableLoadingGif();
 });
 
 const scrollCarousel = (direction) => {

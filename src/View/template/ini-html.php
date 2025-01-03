@@ -18,14 +18,6 @@ define('PROJECT_PUBLIC', './../../../public');
     <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700,200" rel="stylesheet" /> 
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css"
       integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
-    <script src="<?php echo PROJECT_PUBLIC; ?>/js/core/jquery.min.js"></script>
-    <script src="<?php echo PROJECT_PUBLIC; ?>/js/main.js"></script>
-    <script src="<?php echo PROJECT_PUBLIC; ?>/js/core/popper.min.js"></script>
-    <script src="<?php echo PROJECT_PUBLIC; ?>/js/core/bootstrap.min.js"></script>
-    <script src="<?php echo PROJECT_PUBLIC; ?>/js/plugins/bootstrap-switch.js"></script>
-    <script src="<?php echo PROJECT_PUBLIC; ?>/js/plugins/nouislider.min.js"></script>
-    <script src="<?php echo PROJECT_PUBLIC; ?>/js/plugins/bootstrap-datepicker.js"></script>
-    <script src="<?php echo PROJECT_PUBLIC; ?>/js/now-ui-kit.js?v=1.3.0" type="text/javascript"></script>
     <?php if (isset($title)): ?>
         <title><?php echo $title; ?></title>
     <?php else: ?>
@@ -59,15 +51,12 @@ define('PROJECT_PUBLIC', './../../../public');
                 <li class="nav-item" id="documentation">
                     <a class="nav-link" href="/pages/documentation">Documentação</a>
                     </li>
-                    <li class="nav-item" id="newNoticeNavBar">
-                        <a class="nav-link active" href="/nova-noticia">Nova Noticia</a>
-                    </li>
                     <li class="nav-item">
                         <a class="nav-link" href="/pages/catalog">Lista de Filmes</a>
                     </li>
 
                     <li class="nav-item">
-                        <a class="nav-link" onclick="logout();">Sair</a>
+                        <a class="nav-link" style="cursor: pointer;" onclick="logout();">Sair</a>
                     </li>
                 </ul>
             <?php endif; ?>

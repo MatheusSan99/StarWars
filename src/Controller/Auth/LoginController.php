@@ -46,8 +46,6 @@ class LoginController
         $this->AuthService = $AuthService;
     }
 
-
-
     public function loginPage(): ResponseInterface
     {
         if (array_key_exists('logged', $_SESSION) && $_SESSION['logged'] === true) {
@@ -57,7 +55,7 @@ class LoginController
         }
 
         $html = $this->renderTemplate('Auth/login-form', [
-            'titulo' => 'Login'
+            'title' => 'Login'
         ]);
 
         return new Response(200, [], $html);
@@ -126,14 +124,11 @@ class LoginController
  *     )
  * )
  */
-
-
     public function login(ServerRequestInterface $request, Psr7Response $response, array $args): ResponseInterface
     {
-        $email = $request->getParsedBody()['email'];
-        $password = $request->getParsedBody()['password'];
-
         try {
+            $email = $request->getParsedBody()['email'];
+            $password = $request->getParsedBody()['password'];
             $Account = $this->GetAccountByEmailCase->execute($email);
             $AccountModel = $this->AccountLoginCase->execute($Account->getEmail(), $password);
 
@@ -153,9 +148,11 @@ class LoginController
         } catch (Exception $e) {
             $this->logger->warning($e->getMessage(), ['email' => $email]);
             $this->addErrorMessage($e->getMessage());
-            return new Response(302, [
-                'Location' => '/login'
-            ]);
+            $response->getBody()->write(json_encode([
+                'error' => $e->getMessage()
+            ]));
+
+            return $response->withHeader('Content-Type', 'application/json');
         }
     }
 }

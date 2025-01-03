@@ -1,7 +1,6 @@
 document.addEventListener("DOMContentLoaded", (event) => {
   const errorAlert = document.getElementById("errorAlert");
   const successAlert = document.getElementById("successAlert");
-  const url = window.location.href;
   if (errorAlert) {
     setTimeout(() => {
       errorAlert.classList.remove("show");
@@ -17,25 +16,6 @@ document.addEventListener("DOMContentLoaded", (event) => {
       setTimeout(() => successAlert.remove(), 500);
     }, 4000);
   }
-
-  if (url) {
-      if (url.includes("pages/create-account")) {
-      document.forms["register-form"].addEventListener("submit", (event) => {
-        if (!validateRegisterForm()) {
-          event.preventDefault();
-        }
-      });
-    }
-
-    if (url.includes("pages/edit-film")) {
-      $(function () {
-        $(".pop").on("click", function () {
-          $(".imagepreview").attr("src", $(this).find("img").attr("src"));
-          $("#imagemodal").modal("show");
-        });
-      });
-    }
-  }
 });
 
 function addAlertMsg(type, msg) {
@@ -43,6 +23,13 @@ function addAlertMsg(type, msg) {
   alert.className = `alert alert-${type} show`;
   alert.setAttribute("role", "alert");
   alert.innerHTML = msg;
+
+  alert.style.position = 'fixed';
+  alert.style.top = '20px'; 
+  alert.style.right = '20px';
+  alert.style.zIndex = '9999';
+
+  alert.style.transition = 'all 0.5s ease';
 
   document.body.appendChild(alert);
 
@@ -53,68 +40,11 @@ function addAlertMsg(type, msg) {
   }, 8000);
 }
 
-function validateRegisterForm() {
-  const username = document.forms["registerForm"]["username"].value;
-  const email = document.forms["registerForm"]["email"].value;
-  const password = document.forms["registerForm"]["password"].value;
-  const confirmPassword =
-    document.forms["registerForm"]["confirmPassword"].value;
-
-  if (
-    username === "" ||
-    email === "" ||
-    password === "" ||
-    confirmPassword === ""
-  ) {
-    addAlertMsg("danger", "Todos os campos são obrigatórios");
-    return false;
-  }
-
-  if (password !== confirmPassword) {
-    addAlertMsg("danger", "Senhas não conferem");
-    return false;
-  }
-
-  return true;
-}
-
 function openModalImage(imageBase64) {
   var modal = document.getElementById("imagemModal");
   var modalImage = modal.querySelector(".modal-body img");
   modalImage.src = "data:image/jpeg;base64," + imageBase64;
   $(modal).modal("show");
-}
-
-async function login() {
-  const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
-  const host = window.location.origin;
-
-  if (email === "" || password === "") {
-    addAlertMsg("danger", "Todos os campos são obrigatórios");
-    return;
-  }
-
-  const data = new URLSearchParams();
-  data.append("email", email);
-  data.append("password", password);
-
-  const response = await fetch(`${host}/api/internal/login`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded",
-    },
-    body: data.toString(),
-  });
-
-  const result = await response.json();
-
-  if (result.error) {
-    addAlertMsg("danger", result.error);
-    return;
-  }
-
-  window.location.href = "/pages/catalog";
 }
 
 async function logout() {
@@ -134,43 +64,62 @@ async function logout() {
   window.location.href = "/";
 }
 
-async function register() {
-  const username = document.getElementById("username").value;
-  const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
-  const confirmPassword = document.getElementById("confirmPassword").value;
-  const host = window.location.origin;
-
-  if (username === "" || email === "" || password === "" || confirmPassword === "") {
-    addAlertMsg("danger", "Todos os campos são obrigatórios");
+function enableLoadingGif() {
+  if (document.getElementById("loadingContainer")) {
     return;
   }
 
-  if (password !== confirmPassword) {
-    addAlertMsg("danger", "Senhas não conferem");
-    return;
+  const overlay = document.createElement("div");
+  overlay.id = "overlay";
+  overlay.style.position = 'fixed';
+  overlay.style.top = '0';
+  overlay.style.left = '0';
+  overlay.style.width = '100%';
+  overlay.style.height = '100%';
+  overlay.style.backgroundColor = 'rgb(0 0 0 / 100%)'; 
+  overlay.style.zIndex = '9998';  
+  overlay.style.pointerEvents = 'none'; 
+  document.body.appendChild(overlay);
+
+  const loadingContainer = document.createElement("div");
+  loadingContainer.id = "loadingContainer";
+  loadingContainer.style.position = 'fixed';
+  loadingContainer.style.top = '50%';
+  loadingContainer.style.left = '50%';
+  loadingContainer.style.transform = 'translate(-50%, -50%)';
+  loadingContainer.style.zIndex = '9999';
+  loadingContainer.style.display = 'flex';
+  loadingContainer.style.flexDirection = 'column';
+  loadingContainer.style.alignItems = 'center';
+  loadingContainer.style.justifyContent = 'center';
+  loadingContainer.style.textAlign = 'center';
+
+  const webp = document.createElement("img");
+  webp.src = loadingGifPath;  
+  webp.width = "480";
+  webp.height = "274";
+  webp.style.borderRadius = '15px';  
+  webp.style.transition = 'all 0.5s ease';
+  webp.id = "loadingGif";  
+  loadingContainer.appendChild(webp);
+
+  document.body.appendChild(loadingContainer);
+
+  document.body.style.opacity = '0.9';
+  document.body.style.pointerEvents = 'none';
+}
+
+function disableLoadingGif() {
+  const overlay = document.getElementById("overlay");
+  if (overlay) {
+    overlay.remove();
   }
 
-  const data = new URLSearchParams();
-  data.append("username", username);
-  data.append("email", email);
-  data.append("password", password);
-
-  const response = await fetch(`${host}/api/internal/create-account`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded",
-    },
-    body: data.toString(),
-  });
-
-  const result = await response.json();
-
-  if (result.error) {
-    addAlertMsg("danger", result.error);
-    return;
+  const loadingContainer = document.getElementById("loadingContainer");
+  if (loadingContainer) {
+    loadingContainer.remove();
   }
 
-  addAlertMsg("success", "Usuário cadastrado com sucesso");
-  window.location.href = "/";
+  document.body.style.opacity = '1';
+  document.body.style.pointerEvents = 'auto'; 
 }

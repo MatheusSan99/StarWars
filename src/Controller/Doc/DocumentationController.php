@@ -22,7 +22,7 @@ class DocumentationController
     public function docPage(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
         $html = $this->renderTemplate('Doc/api-doc', [
-            'titulo' => 'Documentação da API'
+            'title' => 'Documentação da API'
         ]);
 
         return new Response(200, [], $html);

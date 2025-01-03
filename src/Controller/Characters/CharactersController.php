@@ -30,7 +30,7 @@ class CharactersController
     public function getCharactersPage(): Psr7Response
     {
         $html = $this->renderTemplate('Characters/characters-list', [
-            'titulo' => 'Catalogo de Personagens',
+            'title' => 'Catalogo de Personagens',
         ]);
 
         return new Psr7Response(200, [], $html);
@@ -39,7 +39,7 @@ class CharactersController
     public function getCharacterPage() : Psr7Response
     {
         $html = $this->renderTemplate('Characters/character', [
-            'titulo' => 'Personagem',
+            'title' => 'Personagem',
         ]);
 
         return new Psr7Response(200, [], $html);

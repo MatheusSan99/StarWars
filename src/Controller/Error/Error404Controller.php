@@ -17,7 +17,7 @@ class Error404Controller implements RequestHandlerInterface
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
         $html = $this->renderTemplate('Erro/not-found', [
-            'titulo' => 'Perdido?'
+            'title' => 'Perdido?'
         ]);
 
         return new Response(200, [], $html);

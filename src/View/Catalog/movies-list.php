@@ -2,15 +2,11 @@
 require_once __DIR__ . './../template/ini-html.php';
 ?>
 
-<header>
-  <script src="<?php echo PROJECT_PUBLIC; ?>/js/catalog/movies-list.js"></script>
-</header>
-
 <body class="login-page sidebar-collapse">
   <div class="page-header clear-filter" filter-color="orange">
     <main class="container mt-5">
       <div class="card card-body text-black">
-        <h2 class="title text-center"><?= htmlspecialchars($titulo, ENT_QUOTES, 'UTF-8'); ?></h2>
+        <h2 class="title text-center"><?= htmlspecialchars($title, ENT_QUOTES, 'UTF-8'); ?></h2>
         <input type="hidden" name="operation" id="operation" value="news-list">
         <div class="mb-3">
           <input
@@ -33,5 +29,6 @@ require_once __DIR__ . './../template/ini-html.php';
       </div>
     </main>
   </div>
+  <script src="<?php echo PROJECT_PUBLIC; ?>/js/catalog/movies-list.js"></script>
 
   <?php require_once __DIR__ . './../template/end-html.php'; ?>

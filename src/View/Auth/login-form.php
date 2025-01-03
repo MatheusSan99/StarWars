@@ -42,4 +42,5 @@
       </div>
     </div>
   </div>
+  <script src="<?php echo PROJECT_PUBLIC; ?>/js/account/login-form.js"></script>
   <?php require_once __DIR__ . './../template/end-html.php'; ?>

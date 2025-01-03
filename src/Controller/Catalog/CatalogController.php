@@ -22,7 +22,7 @@ class CatalogController
     public function catalogPage(): Psr7Response
     {
         $html = $this->renderTemplate('Catalog/movies-list', [
-            'titulo' => 'Catalogo de Filmes',
+            'title' => 'Catalogo de Filmes',
         ]);
         
         return new Psr7Response(200, [], $html);
