@@ -1,0 +1,170 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "StarWars API Documentation",
+        "version": "0.1"
+    },
+    "paths": {
+        "/api/internal/confirm-creation": {
+            "post": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "Confirma a criação de uma nova conta",
+                "description": "Este endpoint recebe os dados do usuário (nome, e-mail, senha) e cria uma nova conta.",
+                "operationId": "confirmCreation",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "email",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "João Silva"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "joao.silva@email.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "example": "password123"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "302": {
+                        "description": "Redirecionamento para a página de login após conta criada com sucesso.",
+                        "headers": {
+                            "Location": {
+                                "description": "URL de redirecionamento",
+                                "schema": {
+                                    "type": "string",
+                                    "example": "/pages/login"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Erro devido a campos obrigatórios ausentes ou inválidos.",
+                        "headers": {
+                            "Location": {
+                                "description": "URL de redirecionamento para a criação de conta.",
+                                "schema": {
+                                    "type": "string",
+                                    "example": "/pages/create-account"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Erro desconhecido ao tentar criar a conta.",
+                        "headers": {
+                            "Location": {
+                                "description": "URL de redirecionamento para a criação de conta.",
+                                "schema": {
+                                    "type": "string",
+                                    "example": "/pages/create-account"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/internal/login": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Realiza o login do usuário",
+                "description": "Autentica o usuário com base no email e senha fornecidos.",
+                "operationId": "c826bca30b4c312ccdcc7354bbcd2ff2",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "email",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "description": "Endereço de e-mail do usuário",
+                                        "type": "string",
+                                        "format": "email"
+                                    },
+                                    "password": {
+                                        "description": "Senha do usuário",
+                                        "type": "string",
+                                        "format": "password"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Login bem-sucedido",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Usuário logado com sucesso"
+                                        },
+                                        "token": {
+                                            "description": "Token JWT para autenticação",
+                                            "type": "string"
+                                        },
+                                        "expiration": {
+                                            "description": "Timestamp de expiração do token",
+                                            "type": "integer"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Credenciais inválidas",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Email ou senha incorretos"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

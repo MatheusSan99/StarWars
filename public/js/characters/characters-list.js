@@ -39,7 +39,6 @@ async function getCachedCharacters(filmId) {
 }
 
 async function loadCharacters() {
-    debugger;
     const host = window.location.origin;
     const filmId = window.location.pathname.split("/")[3];
 

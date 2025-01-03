@@ -56,6 +56,9 @@ define('PROJECT_PUBLIC', './../../../public');
 
             <?php if (!empty($_SESSION['logged'])): ?>
                 <ul class="nav">
+                <li class="nav-item" id="documentation">
+                    <a class="nav-link" href="/pages/documentation">Documentação</a>
+                    </li>
                     <li class="nav-item" id="newNoticeNavBar">
                         <a class="nav-link active" href="/nova-noticia">Nova Noticia</a>
                     </li>

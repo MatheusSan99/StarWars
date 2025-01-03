@@ -7,7 +7,8 @@ use StarWars\Controller\{
     Account\NewAccountController,
     Catalog\CatalogController,
     Film\FilmController,
-    Characters\CharactersController
+    Characters\CharactersController,
+    Doc\DocumentationController
 };
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -25,9 +26,10 @@ return function (App $app) {
     });
 
     $app->group('/pages', function (RouteCollectorProxy $app) {
-        $app->get('/login', LoginController::class . ':loginForm');
-        $app->get('/create-account', [NewAccountController::class, 'createAccount']);
+        $app->get('/login', LoginController::class . ':loginPage');
+        $app->get('/create-account', [NewAccountController::class, 'createAccountPage']);
         $app->get('/catalog', CatalogController::class . ':catalogPage')->add($app->getContainer()->get(AuthMiddleware::class));
+        $app->get('/documentation', DocumentationController::class . ':docPage');
 
         $app->group('/film', function (RouteCollectorProxy $app) {
             $app->get('', FilmController::class . ':getFilmPage');
@@ -39,6 +41,7 @@ return function (App $app) {
 
     $app->group('/api', function (RouteCollectorProxy $app) {
         $app->group('/internal', function (RouteCollectorProxy $app) {
+            $app->get('/documentation', [DocumentationController::class, 'getApiDoc']);
             $app->post('/login', LoginController::class . ':login');
             $app->post('/logout', LogoutController::class . ':logout');
             $app->post('/create-account', [NewAccountController::class, 'confirmCreation']);
