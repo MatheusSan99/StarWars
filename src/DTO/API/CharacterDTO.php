@@ -2,6 +2,22 @@
 
 namespace StarWars\DTO\API;
 
+/**
+ * @OA\Schema(
+ *     schema="CharacterDTO",
+ *     type="object",
+ *     required={"id", "name", "height", "mass", "hair_color", "skin_color", "eye_color", "birth_year", "gender"},
+ *     @OA\Property(property="id", type="integer", example=1),
+ *     @OA\Property(property="name", type="string", example="Luke Skywalker"),
+ *     @OA\Property(property="height", type="string", example="1.72m"),
+ *     @OA\Property(property="mass", type="string", example="77kg"),
+ *     @OA\Property(property="hair_color", type="string", example="blond"),
+ *     @OA\Property(property="skin_color", type="string", example="fair"),
+ *     @OA\Property(property="eye_color", type="string", example="blue"),
+ *     @OA\Property(property="birth_year", type="string", example="19BBY"),
+ *     @OA\Property(property="gender", type="string", example="male")
+ * )
+ */
 class CharacterDTO implements \JsonSerializable
 {
     private int $id;

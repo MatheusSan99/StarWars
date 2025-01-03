@@ -8,6 +8,7 @@ use Nyholm\Psr7\Response;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Log\LoggerInterface;
+use Slim\Psr7\Response as Psr7Response;
 use StarWars\Exceptions\Auth\RegisterException;
 use StarWars\UseCases\Account\CreateNewAccountCase;
 use StarWars\Helper\FlashMessageTrait;
@@ -36,80 +37,98 @@ class NewAccountController
         return new Response(200, [], $html);
     }
 
-    /**
-     * @OA\Post(
-     *     path="/api/internal/confirm-creation",
-     *     summary="Confirma a criação de uma nova conta",
-     *     description="Este endpoint recebe os dados do usuário (nome, e-mail, senha) e cria uma nova conta.",
-     *     operationId="confirmCreation",
-     *     tags={"User"},
-     *     @OA\RequestBody(
-     *         required=true,
-     *         @OA\JsonContent(
-     *             required={"name", "email", "password"},
-     *             @OA\Property(property="name", type="string", example="João Silva"),
-     *             @OA\Property(property="email", type="string", format="email", example="joao.silva@email.com"),
-     *             @OA\Property(property="password", type="string", example="password123")
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=302,
-     *         description="Redirecionamento para a página de login após conta criada com sucesso.",
-     *         @OA\Header(
-     *             header="Location",
-     *             description="URL de redirecionamento",
-     *             @OA\Schema(type="string", example="/pages/login")
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=400,
-     *         description="Erro devido a campos obrigatórios ausentes ou inválidos.",
-     *         @OA\Header(
-     *             header="Location",
-     *             description="URL de redirecionamento para a criação de conta.",
-     *             @OA\Schema(type="string", example="/pages/create-account")
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=500,
-     *         description="Erro desconhecido ao tentar criar a conta.",
-     *         @OA\Header(
-     *             header="Location",
-     *             description="URL de redirecionamento para a criação de conta.",
-     *             @OA\Schema(type="string", example="/pages/create-account")
-     *         )
-     *     ),
-     *     security={{
-     *         "bearerAuth": {}
-     *     }}
-     * )
-     */
-    public function confirmCreation(ServerRequestInterface $request): ResponseInterface
-    {
-        $name = htmlspecialchars(filter_input(INPUT_POST, 'name'));
-        $email = filter_input(INPUT_POST, 'email', FILTER_VALIDATE_EMAIL);
-        $password = filter_input(INPUT_POST, 'password');
+/**
+ * @OA\Post(
+ *     path="/api/internal/create-account",
+ *     summary="Confirma a criação de uma nova conta",
+ *     description="Este endpoint recebe os dados do usuário (nome, e-mail, senha) e cria uma nova conta.",
+ *     operationId="confirmCreation",
+ *     tags={"User"},
+ *     @OA\RequestBody(
+ *         required=true,
+ *         @OA\MediaType(
+ *             mediaType="multipart/form-data",
+ *             @OA\Schema(
+ *                 required={"name", "email", "password"},
+ *                 @OA\Property(property="name", type="string", example="João Silva"),
+ *                 @OA\Property(property="email", type="string", format="email", example="joao.silva@email.com"),
+ *                 @OA\Property(property="password", type="string", example="password123")
+ *             )
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=200,
+ *         description="Conta criada com sucesso.",
+ *         @OA\JsonContent(
+ *             @OA\Property(
+ *                 property="message",
+ *                 type="string",
+ *                 example="Usuário registrado com sucesso"
+ *             )
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=400,
+ *         description="Campos obrigatórios ausentes ou inválidos, como nome, e-mail ou senha.",
+ *         @OA\JsonContent(
+ *             @OA\Property(
+ *                 property="message",
+ *                 type="string",
+ *                 example="Campos obrigatórios ausentes ou inválidos."
+ *             )
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=500,
+ *         description="Erro desconhecido ao tentar criar a conta.",
+ *         @OA\JsonContent(
+ *             @OA\Property(
+ *                 property="message",
+ *                 type="string",
+ *                 example="Erro desconhecido ao tentar criar a conta."
+ *             )
+ *         )
+ *     )
+ * )
+ */
 
-        if (!$name || !$email || !$password) {
-            $this->logger->warning(RegisterException::REQUIRED_FIELDS, ['email' => $email, 'name' => $name]);
-            $this->addErrorMessage(RegisterException::REQUIRED_FIELDS);
-
-            return new Response(302, ['Location' => '/pages/create-account']);
-        }
-
-        try {
-            $this->CreateNewAccount->execute($name, $email, $password);
-        } catch (\Exception $e) {
-            $this->logger->error(RegisterException::UNKNOW_ERROR . $e->getMessage(), ['email' => $email, 'name' => $name]);
-
-            $this->addErrorMessage(RegisterException::UNKNOW_ERROR . $e->getMessage());
-
-            return new Response(302, ['Location' => '/pages/create-account']);
-        }
-
-        $this->logger->info('Conta criada com sucesso', ['email' => $email, 'name' => $name]);
-        $this->addSuccessMessage('Conta criada com sucesso, redirecionando para a página de login');
-
-        return new Response(302, ['Location' => '/pages/login']);
-    }
+ public function confirmCreation(ServerRequestInterface $request, Psr7Response $response, array $args): ResponseInterface
+ {
+     $name = $request->getParsedBody()['name'];
+     $email = $request->getParsedBody()['email'];
+     $password = $request->getParsedBody()['password'];
+ 
+     if (!$name || !$email || !$password || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+         $this->logger->warning(RegisterException::REQUIRED_FIELDS, ['email' => $email, 'name' => $name]);
+         $this->addErrorMessage(RegisterException::REQUIRED_FIELDS);
+ 
+         $response->getBody()->write(json_encode([
+             'message' => RegisterException::REQUIRED_FIELDS
+         ]));
+ 
+         return $response->withHeader('Content-Type', 'application/json');
+     }
+ 
+     try {
+         $this->CreateNewAccount->execute($name, $email, $password);
+         $this->logger->info('Conta criada com sucesso', ['email' => $email, 'name' => $name]);
+         $this->addSuccessMessage('Conta criada com sucesso, redirecionando para a página de login');
+ 
+         $response->getBody()->write(json_encode([
+             'message' => 'Usuário registrado com sucesso'
+         ]));
+ 
+         return $response->withHeader('Content-Type', 'application/json');
+     } catch (\Exception $e) {
+         $this->logger->error(RegisterException::UNKNOW_ERROR . $e->getMessage(), ['email' => $email, 'name' => $name]);
+         $this->addErrorMessage(RegisterException::UNKNOW_ERROR . $e->getMessage());
+ 
+         $response->getBody()->write(json_encode([
+             'message' => RegisterException::UNKNOW_ERROR . $e->getMessage()
+         ]));
+ 
+         return $response->withHeader('Content-Type', 'application/json');
+     }
+ }
+ 
 }

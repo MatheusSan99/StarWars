@@ -3,7 +3,6 @@
 namespace StarWars\Controller\Doc;
 
 use Nyholm\Psr7\Response;
-use OpenApi\Annotations\OpenApi;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Log\LoggerInterface;

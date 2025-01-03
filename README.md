@@ -19,3 +19,6 @@ A aplicação apresenta funcionalidades como:
 4. **Estatísticas de Interação**  
 
 5. **Cache de Respostas**  
+
+Gerar Documentacao
+<!-- bash-5.1# ./vendor/bin/openapi --output ./swagger.json ./src -->

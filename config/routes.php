@@ -27,7 +27,7 @@ return function (App $app) {
 
     $app->group('/pages', function (RouteCollectorProxy $app) {
         $app->get('/login', LoginController::class . ':loginPage');
-        $app->get('/create-account', [NewAccountController::class, 'createAccountPage']);
+        $app->get('/create-account', NewAccountController::class . ':createAccountPage');
         $app->get('/catalog', CatalogController::class . ':catalogPage')->add($app->getContainer()->get(AuthMiddleware::class));
         $app->get('/documentation', DocumentationController::class . ':docPage');
 
@@ -41,17 +41,16 @@ return function (App $app) {
 
     $app->group('/api', function (RouteCollectorProxy $app) {
         $app->group('/internal', function (RouteCollectorProxy $app) {
-            $app->get('/documentation', [DocumentationController::class, 'getApiDoc']);
+            $app->get('/documentation', DocumentationController::class . ':getApiDoc');
             $app->post('/login', LoginController::class . ':login');
             $app->post('/logout', LogoutController::class . ':logout');
-            $app->post('/create-account', [NewAccountController::class, 'confirmCreation']);
+            $app->post('/create-account', NewAccountController::class . ':confirmCreation');
         });
     
         $app->group('/external', function (RouteCollectorProxy $app) {
             $app->get('/catalog', CatalogController::class . ':getCatalog'); 
             $app->get('/film/{id}', FilmController::class . ':getFilmById');
             $app->get('/film/{filmId}/characters', CharactersController::class . ':getCharactersByFilmId');  
-            $app->get('/film/{filmId}/characters/{characterId}', CharactersController::class . ':getCharacterById');
         });
     });
 
