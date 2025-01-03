@@ -73,8 +73,8 @@ RUN chmod 777 /var/www/html/database/setup-db.php
 
 # Instalar dependências do Composer
 WORKDIR /var/www/html
-RUN composer install --no-interaction --no-progress --no-suggest --optimize-autoloader --verbose
-RUN composer dump-autoload --optimize
+RUN composer install --no-dev --no-interaction --no-progress --no-suggest --optimize-autoloader --verbose
+RUN composer dump-autoload --no-dev --optimize
 
 # Torna o start.sh executável
 RUN chmod +x /var/www/html/start.sh
