@@ -28,7 +28,7 @@ jobs:
         run: |
           docker build --no-cache -t starwars .
 
-      - uses: php-actions/phpunit@v9
+      - uses: php-actions/phpunit@v3
         with:
           php-version: '7.4'
           working-directory: ./tests
