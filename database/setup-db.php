@@ -11,7 +11,7 @@ if (!file_exists($dbDir)) {
 
 if (!file_exists($dbPath)) {
     touch($dbPath); 
-    chmod($dbPath, 0666);
+    chmod($dbPath, 0777);
 }
 
 chmod($dbDir, 0777); 

@@ -17,12 +17,19 @@ use Psr\Http\Message\ServerRequestInterface;
 use Slim\Psr7\Response as Psr7Response;
 use StarWars\Service\Auth\AuthService;
 use OpenApi\Annotations as OA;
+use StarWars\Exceptions\Auth\AuthenticationException;
 
 /**
  * @OA\Info(title="StarWars API Documentation", version="0.1")
+ * 
  * @OA\Server(
  *     url="http://localhost:8080",
  *     description="Servidor local para desenvolvimento"
+ * )
+ * 
+ * @OA\Server(
+ *     url="http://ec2-56-124-33-6.sa-east-1.compute.amazonaws.com:8080/",
+ *     description="Servidor de produção AWS"
  * )
  */
 
@@ -49,6 +56,7 @@ class LoginController
     public function loginPage(): ResponseInterface
     {
         if (array_key_exists('logged', $_SESSION) && $_SESSION['logged'] === true) {
+            $this->logger->info(AuthenticationException::ALREADY_LOGGED);
             return new Response(302, [
                 'Location' => '/pages/catalog'
             ]);
@@ -143,6 +151,8 @@ class LoginController
                 'token' => $token,
                 'expiration' => $expirationTime
             ]));
+
+            $this->logger->info('Usuário logado com sucesso', ['email' => $email]);
 
             return $response->withHeader('Content-Type', 'application/json');
         } catch (Exception $e) {

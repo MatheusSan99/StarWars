@@ -2,12 +2,25 @@
 
 namespace StarWars\Service\Connection;
 
+use Psr\Log\LoggerInterface;
+
 class CurlConnection implements ConnectionInterface
 {
     private array $headers = [];
+    private LoggerInterface $logger;
+
+    public function __construct(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
+    }
 
     public function getResponse(string $url, array $headers = []): array
     {
+        $this->logger->info('Requisicao Externa: ' . $url, [
+            'headers' => $headers,
+            'method' => 'GET',
+        ]);
+
         $ch = curl_init($url);
     
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -20,10 +33,11 @@ class CurlConnection implements ConnectionInterface
         }
 
         $response = curl_exec($ch);
-        
+
         if ($response === false) {
             $error = curl_error($ch);
             curl_close($ch);
+            $this->logger->error('Erro na Requisicao Externa: ' . $error);
             return ['error' => 'Request failed: ' . $error];
         }
     
@@ -31,14 +45,22 @@ class CurlConnection implements ConnectionInterface
         curl_close($ch);
     
         if ($httpCode >= 400) {
+            $this->logger->error('Erro na Requisicao Externa: ' . $httpCode);
             return ['error' => 'HTTP error: ' . $httpCode];
         }
     
         $decodedResponse = json_decode($response, true);
     
         if (json_last_error() !== JSON_ERROR_NONE) {
+            $this->logger->error('Erro na Requisicao Externa: ' . json_last_error_msg());
             return ['error' => 'JSON decode error: ' . json_last_error_msg()];
         }
+
+        $this->logger->info('Requisicao Externa com sucesso: ' . $url, [
+            'headers' => $headers,
+            'method' => 'GET',
+            'response' => $decodedResponse,
+        ]);
     
         return $decodedResponse;
     }

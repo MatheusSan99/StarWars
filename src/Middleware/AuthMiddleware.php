@@ -17,7 +17,7 @@ class AuthMiddleware implements MiddlewareInterface
     private LoggerInterface $logger;
     private AuthService $AuthService;
 
-    public function __construct(GetAccountByEmailCase $GetAccountByTokenCase,LoggerInterface $logger, AuthService $AuthService)
+    public function __construct(GetAccountByEmailCase $GetAccountByTokenCase, LoggerInterface $logger, AuthService $AuthService)
     {
         $this->GetAccountByTokenCase = $GetAccountByTokenCase;
         $this->logger = $logger;
@@ -27,6 +27,7 @@ class AuthMiddleware implements MiddlewareInterface
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         if (array_key_exists('logged', $_SESSION) && $_SESSION['logged'] === true) {
+            $this->logger->info('Usuário já está logado.');
             return $handler->handle($request);
         }
 
@@ -38,6 +39,8 @@ class AuthMiddleware implements MiddlewareInterface
                 $this->GetAccountByTokenCase->execute($validToken->email);
 
                 $_SESSION['logged'] = true;
+
+                $this->logger->info('Usuário logado com sucesso.');
 
                 return $handler->handle($request);
             } catch (\Exception $e) {

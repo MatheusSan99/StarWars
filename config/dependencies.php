@@ -54,7 +54,9 @@ return function (ContainerBuilder $containerBuilder) {
             return $logger;
         },
 
-        ConnectionInterface::class => \DI\create(CurlConnection::class),
+        ConnectionInterface::class => function (ContainerInterface $c) {
+            return new CurlConnection($c->get(LoggerInterface::class));
+        },
         FilmsInterface::class => function (ContainerInterface $c) {
             return new FilmsAPI($c->get(ConnectionInterface::class));
         },

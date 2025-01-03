@@ -24,9 +24,7 @@ class LogoutController
     public function logout(ServerRequestInterface $request, Response $response, array $args): ResponseInterface
     {
         $message = $this->LogoutCase->execute();
-
         $response->getBody()->write(json_encode(['message' => $message]));
-
         return $response;
     }
 }

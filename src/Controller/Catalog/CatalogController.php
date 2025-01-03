@@ -6,6 +6,7 @@ use Nyholm\Psr7\Response as Psr7Response;
 use Psr\Container\ContainerInterface;
 use StarWars\UseCases\API\GetCatalogCase;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Log\LoggerInterface;
 use Slim\Psr7\Response;
 use StarWars\Helper\HtmlRendererTrait;
 
@@ -13,10 +14,12 @@ class CatalogController
 {
     use HtmlRendererTrait;
     private ContainerInterface $container;
+    private LoggerInterface $logger;
 
-    public function __construct(ContainerInterface $containerInterface)
+    public function __construct(ContainerInterface $containerInterface, LoggerInterface $logger)
     {
         $this->container = $containerInterface;
+        $this->logger = $logger;
     }
 
     public function catalogPage(): Psr7Response
@@ -63,9 +66,15 @@ class CatalogController
 
     public function getCatalog(ServerRequestInterface $request, Response $response, array $args): Response
     {
-        $GetCatalogCase = $this->container->get(GetCatalogCase::class);
-        $response = $response->withHeader('Content-Type', 'application/json');
-        $response->getBody()->write(json_encode($GetCatalogCase->execute()));
-        return $response;
+        try {
+            $GetCatalogCase = $this->container->get(GetCatalogCase::class);
+            $response = $response->withHeader('Content-Type', 'application/json');
+            $response->getBody()->write(json_encode($GetCatalogCase->execute()));
+            return $response;
+        } catch (\Exception $e) {
+            $this->logger->error('Erro ao tentar buscar o catálogo: ', ['error' => $e->getMessage()]);
+            $response->getBody()->write(json_encode(['message' => 'Erro ao tentar buscar o catálogo: ' . $e->getMessage()]));
+            return $response->withStatus(500);
+        }
     }
 }

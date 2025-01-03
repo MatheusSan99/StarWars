@@ -5,6 +5,7 @@ namespace StarWars\Controller\Characters;
 use Nyholm\Psr7\Response as Psr7Response;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Log\LoggerInterface;
 use Slim\Psr7\Response;
 use StarWars\Helper\HtmlRendererTrait;
 use StarWars\UseCases\API\GetCharacterCase;
@@ -18,13 +19,15 @@ class CharactersController
     private GetFilmCase $getFilmCase;
     private GetCharactersListCase $getCharactersListCase;
     private GetCharacterCase $getCharacterCase;
+    private LoggerInterface $logger;
 
-    public function __construct(ContainerInterface $containerInterface, GetFilmCase $getFilmCase, GetCharactersListCase $getCharactersListCase, GetCharacterCase $getCharacterCase)
+    public function __construct(ContainerInterface $containerInterface, GetFilmCase $getFilmCase, GetCharactersListCase $getCharactersListCase, GetCharacterCase $getCharacterCase, LoggerInterface $logger)
     {
         $this->container = $containerInterface;
         $this->getFilmCase = $getFilmCase;
         $this->getCharactersListCase = $getCharactersListCase;
         $this->getCharacterCase = $getCharacterCase;
+        $this->logger = $logger;
     }
 
     public function getCharactersPage(): Psr7Response
@@ -94,16 +97,23 @@ class CharactersController
 
     public function getCharactersByFilmId(ServerRequestInterface $request, Response $response, array $args): Response
     {
-        $filmId = $args['filmId'];
+        try {
+            $filmId = $args['filmId'];
 
-        $Film = $this->getFilmCase->execute($filmId);
-
-        $CharactersIds = $Film->getCharacters();
-
-        $response = $response->withHeader('Content-Type', 'application/json');
-
-        $response->getBody()->write(json_encode($this->getCharactersListCase->execute($CharactersIds)));
-
-        return $response;
+            
+            $Film = $this->getFilmCase->execute($filmId);
+            
+            $CharactersIds = $Film->getCharacters();
+            
+            $response = $response->withHeader('Content-Type', 'application/json');
+            
+            $response->getBody()->write(json_encode($this->getCharactersListCase->execute($CharactersIds)));
+            
+            return $response;
+        } catch (\Exception $e) {
+            $this->logger->error('Erro ao tentar buscar os personagens: ', ['error' => $e->getMessage()]);
+            $response->getBody()->write(json_encode(['message' => 'Erro ao tentar buscar os personagens: ' . $e->getMessage()]));
+            return $response->withStatus(500);
+        }
     }
 }
