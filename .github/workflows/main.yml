@@ -24,20 +24,13 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-composer-
 
-      - name: Install PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '7.4'
-
-      - name: Install PHPUnit
-        run: composer require --dev phpunit/phpunit
-
       - name: Build Docker Image
         run: |
           docker build --no-cache -t starwars .
 
       - uses: php-actions/phpunit@v3
         with:
+          bootstrap: vendor/autoload.php
           php_version: '7.4'
-          working-directory: ./tests
-  
+          args: --coverage-text
+          version: 8
