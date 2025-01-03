@@ -29,14 +29,12 @@ return function (App $app) {
         $app->get('/login', LoginController::class . ':loginPage');
         $app->get('/create-account', NewAccountController::class . ':createAccountPage');
         $app->get('/catalog', CatalogController::class . ':catalogPage')->add($app->getContainer()->get(AuthMiddleware::class));
-        $app->get('/documentation', DocumentationController::class . ':docPage');
+        $app->get('/documentation', DocumentationController::class . ':docPage')->add($app->getContainer()->get(AuthMiddleware::class));
 
         $app->group('/film', function (RouteCollectorProxy $app) {
             $app->get('', FilmController::class . ':getFilmPage');
             $app->get('/{filmId}/characters', CharactersController::class . ':getCharactersPage');
-            $app->get('/{filmId}/characters/{characterId}', CharactersController::class . ':getCharacterPage');
         })->add($app->getContainer()->get(AuthMiddleware::class));
-
     });
 
     $app->group('/api', function (RouteCollectorProxy $app) {

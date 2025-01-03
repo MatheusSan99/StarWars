@@ -1,24 +1,48 @@
-Este repositório contém um projeto desenvolvido em PHP 7.4, utilizando os princípios de orientação a objetos e o padrão de arquitetura MVC. O objetivo do projeto é criar uma aplicação web com um catálogo de filmes do universo Star Wars, consumindo informações de APIs públicas relacionadas. O frontend utiliza Bootstrap e jQuery para uma experiência de usuário aprimorada.
+# Star Wars API: Catálogo de Filmes
 
-A aplicação apresenta funcionalidades como:
-- Listagem dos filmes ordenados por data de lançamento.
-- Exibição de detalhes dos filmes em uma página dedicada.
-- Cálculo da idade dos filmes em anos, meses e dias.
-- Registros de logs para cada interação com a API.
-- Backend estruturado para fornecer uma API local consumida pelo frontend.
+Este repositório contém um projeto desenvolvido em **PHP 7.4**, utilizando princípios de **orientação a objetos (OO)** e o padrão **Model-View-Controller (MVC)**. A aplicação é um catálogo web de filmes do universo **Star Wars**, com dados consumidos de APIs públicas, oferecendo funcionalidades avançadas e uma experiência imersiva.
 
 ---
 
-### Funcionalidades Adicionais
-1. **Sistema de Favoritos**    
+## **Funcionalidades**
+- **Listagem de filmes:** Inclui Diversas informacoes sobre os filmes da franquia.
+- **Detalhes dos filmes:** Inclui informações completas e animações inspiradas no universo Star Wars.
+- **Cálculo de idade dos filmes:** Mostra quantos anos, meses e dias se passaram desde o lançamento.
+- **Sistema de autenticação:** Registro e login de usuários.
+- **Logs detalhados:** Registro de interações com a API usando Monolog.
+- **Backend API:** Fornece dados para o frontend e consumidores externos.
 
-2. **Pesquisa de Filmes**  
+---
 
-3. **Comentários dos Usuários**  
+## **Documentação**
+Abaixo estão os links para documentos detalhados de cada parte do projeto:
 
-4. **Estatísticas de Interação**  
+1. **[Arquitetura](Documentation/arquitecture.md)**
+   - Descrição detalhada da organização do projeto, seguindo o padrão **MVC** e incorporando princípios de **Clean Architecture**.
 
-5. **Cache de Respostas**  
+2. **[Ambiente de Desenvolvimento e Produção](Documentation/environment.md)**
+   - Configuração dos ambientes Docker para desenvolvimento e produção.
+   - Separação de dependências e otimização das imagens Docker.
 
-Gerar Documentacao
-<!-- bash-5.1# ./vendor/bin/openapi --output ./swagger.json ./src -->
+3. **[Frontend](Documentation/front-end.md)**
+   - Uso de **Bootstrap** e **jQuery**.
+   - Detalhes sobre as animações e a experiência do usuário inspirada no tema Star Wars.
+
+4. **[Instalação](Documentation/instalation.md)**
+   - Instruções passo a passo para configurar o ambiente, instalar dependências e rodar o projeto.
+
+5. **[Sistema de Logs](Documentation/logging.md)**
+   - Implementação de logs com **Monolog**, níveis de log e como interpretá-los.
+
+6. **[Documentação da API (Swagger)](Documentation/swagger.md)**
+   - Esquemas detalhados de entrada e saída da API.
+   - Links para acessar a interface Swagger e testar endpoints.
+
+7. **[Tecnologias Utilizadas](Documentation/tecnologies.md)**
+   - Lista e descrição das principais tecnologias empregadas, incluindo PHP, Docker, Monolog, Swagger, e outras.
+
+8. **[Testes](Documentation/tests.md)**
+   - Estrutura de testes de unidade e integração.
+   - Ferramentas utilizadas e como executar os testes localmente.
+
+Este projeto foi projetado para ser fácil de instalar, explorar e escalar.
