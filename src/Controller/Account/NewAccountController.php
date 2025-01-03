@@ -94,12 +94,12 @@ class NewAccountController
 
  public function confirmCreation(ServerRequestInterface $request, Psr7Response $response, array $args): ResponseInterface
  {
-     $name = $request->getParsedBody()['name'];
+     $username = $request->getParsedBody()['username'];
      $email = $request->getParsedBody()['email'];
      $password = $request->getParsedBody()['password'];
  
-     if (!$name || !$email || !$password || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
-         $this->logger->warning(RegisterException::REQUIRED_FIELDS, ['email' => $email, 'name' => $name]);
+     if (!$username || !$email || !$password || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+         $this->logger->warning(RegisterException::REQUIRED_FIELDS, ['email' => $email, 'username' => $username]);
          $this->addErrorMessage(RegisterException::REQUIRED_FIELDS);
  
          $response->getBody()->write(json_encode([
@@ -110,8 +110,8 @@ class NewAccountController
      }
  
      try {
-         $this->CreateNewAccount->execute($name, $email, $password);
-         $this->logger->info('Conta criada com sucesso', ['email' => $email, 'name' => $name]);
+         $this->CreateNewAccount->execute($username, $email, $password);
+         $this->logger->info('Conta criada com sucesso', ['email' => $email, 'username' => $username]);
          $this->addSuccessMessage('Conta criada com sucesso, redirecionando para a página de login');
  
          $response->getBody()->write(json_encode([
@@ -120,7 +120,7 @@ class NewAccountController
  
          return $response->withHeader('Content-Type', 'application/json');
      } catch (\Exception $e) {
-         $this->logger->error(RegisterException::UNKNOW_ERROR . $e->getMessage(), ['email' => $email, 'name' => $name]);
+         $this->logger->error(RegisterException::UNKNOW_ERROR . $e->getMessage(), ['email' => $email, 'username' => $username]);
          $this->addErrorMessage(RegisterException::UNKNOW_ERROR . $e->getMessage());
  
          $response->getBody()->write(json_encode([
