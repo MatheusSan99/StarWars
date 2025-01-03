@@ -172,12 +172,6 @@ memory_limit = 128
 max_input_vars = 1000
 max_input_time = 60
 
-; Sessões
-session.gc_maxlifetime = 1440
-session.save_path = "/var/lib/php/sessions"
-session.cookie_secure = 1
-session.cookie_httponly = 1
-
 ; Segurança
 expose_php = Off
 
