@@ -8,6 +8,6 @@ document.addEventListener("DOMContentLoaded", function () {
             SwaggerUIBundle.presets.apis,
             SwaggerUIStandalonePreset
         ],
-        layout: "StandaloneLayout"
+        layout: "BaseLayout"
       });
 });

@@ -1,22 +1,22 @@
 .notification-container {
     position: fixed;
-    bottom: 60px; /* Ajusta a posição para ficar mais acima */
+    bottom: 60px;
     right: 20px;
     z-index: 1050;
-    max-width: 350px; /* Aumenta um pouco a largura máxima */
+    max-width: 350px; 
 }
 
 .alert {
-    margin-bottom: 15px; /* Aumenta o espaço entre notificações */
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* Sombra mais pronunciada */
-    border-radius: 10px; /* Bordas mais arredondadas */
+    margin-bottom: 15px; 
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    border-radius: 10px; 
     overflow: hidden;
     display: flex;
     align-items: center;
     padding: 15px 20px;
     font-size: 16px;
     font-weight: 500;
-    color: #ffffff; /* Cor da fonte branca */
+    color: #ffffff;
 }
 
 .custom-alert {
