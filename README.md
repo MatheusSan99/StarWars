@@ -45,4 +45,7 @@ Abaixo estão os links para documentos detalhados de cada parte do projeto:
    - Estrutura de testes de unidade e integração.
    - Ferramentas utilizadas e como executar os testes localmente.
 
+9. **[Deploy](Documentation/deploy.md)**
+   - Deploy do projeto na AWS
+
 Este projeto foi projetado para ser fácil de instalar, explorar e escalar.

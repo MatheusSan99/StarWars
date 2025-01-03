@@ -30,4 +30,5 @@ jobs:
 
       - name: Run PHPUnit Tests
         run: |
-          docker run --rm starwars bash -c "vendor/bin/phpunit"
+          docker exec -it starwars vendor/bin/phpunit
+  
