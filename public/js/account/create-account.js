@@ -36,7 +36,7 @@ async function register() {
   const username = document.getElementById("name").value;
   const email = document.getElementById("email").value;
   const password = document.getElementById("password").value;
-  const confirmPassword = document.getElementById("confirmPassword").value;
+  const confirmPassword = document.getElementById("confirm_password").value;
   const host = window.location.origin;
 
   if (
