@@ -30,4 +30,5 @@ jobs:
 
       - name: Run PHPUnit Tests
         run: |
-          docker run --rm starwars:latest bash -c "cd /var/www/html && vendor/bin/phpunit"
+          docker run --rm starwars:latest bash -c "cd /var/www/html && ls -R && vendor/bin/phpunit"
+  
