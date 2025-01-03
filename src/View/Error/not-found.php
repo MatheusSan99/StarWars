@@ -3,7 +3,7 @@
 
 <body class="error-page sidebar-collapse">
   <div class="page-header clear-filter" filter-color="orange">
-    <div class="page-header-image" style="background-image: url('/assets/img/404-background.jpg');"></div>
+    <div class="page-header-image"></div>
     <div class="content">
       <div class="container">
         <div class="col-md-6 ml-auto mr-auto text-center">

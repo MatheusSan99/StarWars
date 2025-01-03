@@ -33,7 +33,6 @@ function validateRegisterForm() {
 }
 
 async function register() {
-  debugger
   const username = document.getElementById("name").value;
   const email = document.getElementById("email").value;
   const password = document.getElementById("password").value;
