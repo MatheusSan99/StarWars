@@ -35,4 +35,4 @@ jobs:
 
       - name: Run PHPUnit Tests
         run: |
-          docker run --rm -v $(pwd):/app -w /app starwars ls -la
+          docker run --rm -v $(pwd):/app -w /app starwars ./vendor/bin/phpunit
