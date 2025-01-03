@@ -5,118 +5,35 @@ namespace StarWars\DTO\API;
 use JsonSerializable;
 use OpenApi\Annotations as OA;
 
+/**
+ * @OA\Schema(
+ *     schema="FilmDTO",
+ *     type="object",
+ *     required={"id", "title", "episode_id", "opening_crawl", "release_date", "director", "producers", "characters"},
+ *     @OA\Property(property="id", type="integer", example=1),
+ *     @OA\Property(property="title", type="string", example="A New Hope"),
+ *     @OA\Property(property="episode_id", type="integer", example=4),
+ *     @OA\Property(property="opening_crawl", type="string", example="It is a period of civil war. Rebel spaceships, striking from a hidden base, have won their first victory against the evil Galactic Empire."),
+ *     @OA\Property(property="release_date", type="string", format="date", example="1977-05-25"),
+ *     @OA\Property(property="director", type="string", example="George Lucas"),
+ *     @OA\Property(property="producers", type="string", example="Gary Kurtz, Rick McCallum"),
+ *     @OA\Property(property="characters", type="array", @OA\Items(type="integer", example=1)),
+ *     @OA\Property(property="isFavorite", type="boolean", example=false),
+ *     @OA\Property(property="isOnDatabase", type="boolean", example=true)
+ * )
+ */
+
 class FilmDTO implements JsonSerializable
 {
-    /**
-     * @OA\Property(
-     *     property="id",
-     *     type="integer",
-     *     description="Identificador único do filme",
-     *     example=1
-     * )
-     * @var int
-     */
     private int $id;
-
-    /**
-     * @OA\Property(
-     *     property="title",
-     *     type="string",
-     *     description="Título do filme",
-     *     example="Star Wars: Episode IV - A New Hope"
-     * )
-     * @var string
-     */
     private string $title;
-
-    /**
-     * @OA\Property(
-     *     property="episode_id",
-     *     type="integer",
-     *     description="ID do episódio do filme",
-     *     example=4
-     * )
-     * @var int
-     */
     private int $episode_id;
-
-    /**
-     * @OA\Property(
-     *     property="opening_crawl",
-     *     type="string",
-     *     description="Abertura do filme, o famoso texto de introdução que aparece no início",
-     *     example="It is a period of civil war..."
-     * )
-     * @var string
-     */
     private string $opening_crawl;
-
-    /**
-     * @OA\Property(
-     *     property="release_date",
-     *     type="string",
-     *     format="date",
-     *     description="Data de lançamento do filme",
-     *     example="1977-05-25"
-     * )
-     * @var string
-     */
     private string $release_date;
-
-    /**
-     * @OA\Property(
-     *     property="director",
-     *     type="string",
-     *     description="Nome do diretor do filme",
-     *     example="George Lucas"
-     * )
-     * @var string
-     */
     private string $director;
-
-    /**
-     * @OA\Property(
-     *     property="producers",
-     *     type="string",
-     *     description="Nome dos produtores do filme",
-     *     example="George Lucas, Gary Kurtz"
-     * )
-     * @var string
-     */
     private string $producers;
-
-    /**
-     * @OA\Property(
-     *     property="characters",
-     *     type="array",
-     *     items=@OA\Items(type="integer"),
-     *     description="Lista de identificadores dos personagens que aparecem no filme",
-     *     example={1, 2, 3}
-     * )
-     * @var array
-     */
     private array $characters;
-
-    /**
-     * @OA\Property(
-     *     property="isFavorite",
-     *     type="boolean",
-     *     description="Indica se o filme é marcado como favorito pelo usuário",
-     *     example=true
-     * )
-     * @var bool
-     */
     private bool $isFavorite = false;
-
-    /**
-     * @OA\Property(
-     *     property="isOnDatabase",
-     *     type="boolean",
-     *     description="Indica se o filme está presente no banco de dados",
-     *     example=true
-     * )
-     * @var bool
-     */
     private bool $isOnDatabase = false;
 
     public function __construct(

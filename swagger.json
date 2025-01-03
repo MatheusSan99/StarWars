@@ -1,0 +1,428 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "StarWars API Documentation",
+        "version": "0.1"
+    },
+    "servers": [
+        {
+            "url": "http://localhost:8080",
+            "description": "Servidor local para desenvolvimento"
+        }
+    ],
+    "paths": {
+        "/api/internal/create-account": {
+            "post": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "Confirma a criação de uma nova conta",
+                "description": "Este endpoint recebe os dados do usuário (nome, e-mail, senha) e cria uma nova conta.",
+                "operationId": "confirmCreation",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "email",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "João Silva"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "joao.silva@email.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "example": "password123"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Conta criada com sucesso.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Usuário registrado com sucesso"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Campos obrigatórios ausentes ou inválidos, como nome, e-mail ou senha.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Campos obrigatórios ausentes ou inválidos."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Erro desconhecido ao tentar criar a conta.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Erro desconhecido ao tentar criar a conta."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/internal/login": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Realiza o login do usuário",
+                "description": "Autentica o usuário com base no email e senha fornecidos.",
+                "operationId": "c826bca30b4c312ccdcc7354bbcd2ff2",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "required": [
+                                    "email",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "description": "Endereço de e-mail do usuário",
+                                        "type": "string",
+                                        "format": "email"
+                                    },
+                                    "password": {
+                                        "description": "Senha do usuário",
+                                        "type": "string",
+                                        "format": "password"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Login bem-sucedido",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Usuário logado com sucesso"
+                                        },
+                                        "token": {
+                                            "description": "Token JWT para autenticação",
+                                            "type": "string"
+                                        },
+                                        "expiration": {
+                                            "description": "Timestamp de expiração do token",
+                                            "type": "integer"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Credenciais inválidas",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Email ou senha incorretos"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/external/catalog": {
+            "get": {
+                "tags": [
+                    "Catalog"
+                ],
+                "summary": "Retorna o catálogo de filmes",
+                "description": "Este endpoint retorna um catálogo com uma lista de filmes disponíveis.",
+                "operationId": "getCatalog",
+                "responses": {
+                    "200": {
+                        "description": "Catálogo de filmes retornado com sucesso.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "films": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/FilmDTO"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor ao tentar buscar o catálogo.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Erro desconhecido ao tentar buscar o catálogo."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/external/film/{filmId}/characters": {
+            "get": {
+                "tags": [
+                    "Characters"
+                ],
+                "summary": "Retorna os personagens de um filme específico",
+                "description": "Este endpoint retorna uma lista de personagens detalhados de um filme com base no seu ID.",
+                "operationId": "getCharactersByFilmId",
+                "parameters": [
+                    {
+                        "name": "filmId",
+                        "in": "path",
+                        "description": "ID do filme para obter os personagens",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Lista de personagens do filme retornada com sucesso.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/CharacterDTO"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Filme não encontrado ou não possui personagens.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Filme não encontrado."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor ao tentar buscar os personagens.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Erro desconhecido ao tentar buscar os personagens."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "CatalogDTO": {
+                "required": [
+                    "films"
+                ],
+                "properties": {
+                    "films": {
+                        "description": "Lista de filmes no catálogo",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/FilmDTO"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "CharacterDTO": {
+                "required": [
+                    "id",
+                    "name",
+                    "height",
+                    "mass",
+                    "hair_color",
+                    "skin_color",
+                    "eye_color",
+                    "birth_year",
+                    "gender"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Luke Skywalker"
+                    },
+                    "height": {
+                        "type": "string",
+                        "example": "1.72m"
+                    },
+                    "mass": {
+                        "type": "string",
+                        "example": "77kg"
+                    },
+                    "hair_color": {
+                        "type": "string",
+                        "example": "blond"
+                    },
+                    "skin_color": {
+                        "type": "string",
+                        "example": "fair"
+                    },
+                    "eye_color": {
+                        "type": "string",
+                        "example": "blue"
+                    },
+                    "birth_year": {
+                        "type": "string",
+                        "example": "19BBY"
+                    },
+                    "gender": {
+                        "type": "string",
+                        "example": "male"
+                    }
+                },
+                "type": "object"
+            },
+            "FilmDTO": {
+                "required": [
+                    "id",
+                    "title",
+                    "episode_id",
+                    "opening_crawl",
+                    "release_date",
+                    "director",
+                    "producers",
+                    "characters"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "title": {
+                        "type": "string",
+                        "example": "A New Hope"
+                    },
+                    "episode_id": {
+                        "type": "integer",
+                        "example": 4
+                    },
+                    "opening_crawl": {
+                        "type": "string",
+                        "example": "It is a period of civil war. Rebel spaceships, striking from a hidden base, have won their first victory against the evil Galactic Empire."
+                    },
+                    "release_date": {
+                        "type": "string",
+                        "format": "date",
+                        "example": "1977-05-25"
+                    },
+                    "director": {
+                        "type": "string",
+                        "example": "George Lucas"
+                    },
+                    "producers": {
+                        "type": "string",
+                        "example": "Gary Kurtz, Rick McCallum"
+                    },
+                    "characters": {
+                        "type": "array",
+                        "items": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    "isFavorite": {
+                        "type": "boolean",
+                        "example": false
+                    },
+                    "isOnDatabase": {
+                        "type": "boolean",
+                        "example": true
+                    }
+                },
+                "type": "object"
+            }
+        }
+    }
+}
