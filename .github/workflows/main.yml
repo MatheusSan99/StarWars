@@ -13,11 +13,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-     
       - name: Checkout code
         uses: actions/checkout@v3
 
-     
       - name: Setup Composer Cache
         uses: actions/cache@v3
         with:
@@ -28,9 +26,8 @@ jobs:
 
       - name: Build Docker Image
         run: |
-          docker build -t php-app:latest .
+          docker build --no-cache -t starwars:latest .
 
-      
       - name: Run PHPUnit Tests
         run: |
-          docker run --rm php-app:latest bash -c "vendor/bin/phpunit"
+          docker run --rm starwars:latest bash -c "vendor/bin/phpunit"
