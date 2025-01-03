@@ -13,8 +13,7 @@ require_once __DIR__ . './../template/ini-html.php';
             type="text"
             id="search-movie"
             class="form-control"
-            placeholder="Pesquisar..."
-            onkeyup="searchMovieFromCatalog()">
+            placeholder="Pesquisar (Nome do Filme, Diretor, Produtores, Data de Lançamento)" onkeyup="searchMovieFromCatalog()">
         </div>
 
         <div class="table-responsive">

@@ -81,8 +81,7 @@ async function buildCatalogTable(catalog) {
     "Diretor",
     "Data de Lançamento",
     "Produtores",
-    "Personagens",
-    "Ações",
+    "Personagens"
   ];
   buildTableHeaders(headers, thead);
 
@@ -171,25 +170,16 @@ function buildFilmRow(film) {
     )
   );
 
-  const actionsTd = document.createElement("td");
-  actionsTd.appendChild(
-    createActionButton(`/edit-film?id=${film.id}`, "Editar", [
-      "btn",
-      "btn-info",
-      "btn-round",
-      "btn-sm",
-    ])
+  tr.setAttribute(
+    "data-film",
+    JSON.stringify({
+      title: film.title,
+      director: film.director,
+      release_date: film.release_date,
+      producers: film.producers,
+    })
   );
-  actionsTd.appendChild(
-    createActionButton(`/remove-film?id=${film.id}`, "Excluir", [
-      "btn",
-      "btn-danger",
-      "btn-round",
-      "btn-sm",
-    ])
-  );
-  tr.appendChild(actionsTd);
-
+  
   return tr;
 }
 
@@ -220,13 +210,24 @@ async function searchMovieFromCatalog() {
   const rows = tbody.getElementsByTagName("tr");
 
   for (let i = 0; i < rows.length; i++) {
-    const title = rows[i].getElementsByTagName("td")[1];
-
-    if (title) {
-      const textValue = title.textContent || title.innerText;
-
-      if (textValue.toLowerCase().indexOf(searchValue.toLowerCase()) > -1) {
-        rows[i].style.display = "";
+    const trFilmAttributes = rows[i].getAttribute("data-film");
+  
+    if (trFilmAttributes) {
+      const film = JSON.parse(trFilmAttributes);
+  
+      const likePattern = searchValue
+        .replace(/%/g, ".*")
+        .replace(/_/g, ".") 
+        .toLowerCase();
+      const regex = new RegExp(likePattern, "i"); 
+  
+      if (
+        regex.test(film.title) ||
+        regex.test(film.director) ||
+        regex.test(film.release_date) ||
+        regex.test(film.producers)
+      ) {
+        rows[i].style.display = ""; 
       } else {
         rows[i].style.display = "none";
       }
