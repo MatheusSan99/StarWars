@@ -68,6 +68,9 @@ COPY ./nginx/default.conf /etc/nginx/nginx.conf
 # Permissões
 RUN chown -R www-data:www-data /var/www/html && chmod -R 755 /var/www/html
 
+# Permissao total para o setup-db
+RUN chmod 777 /var/www/html/database/setup-db.php
+
 # Instalar dependências do Composer
 WORKDIR /var/www/html
 RUN composer install --no-dev --no-interaction --no-progress --no-suggest --optimize-autoloader

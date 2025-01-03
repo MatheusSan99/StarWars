@@ -28,7 +28,10 @@ jobs:
         run: |
           docker build --no-cache -t starwars .
 
+      - name: Install Composer Dependencies (including dev dependencies)
+        run: |
+          docker run --rm starwars:latest bash -c "cd /var/www/html && composer install --no-interaction --optimize-autoloader"
+
       - name: Run PHPUnit Tests
         run: |
           docker run --rm starwars:latest bash -c "cd /var/www/html && vendor/bin/phpunit"
-  
