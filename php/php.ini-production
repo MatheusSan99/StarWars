@@ -168,7 +168,7 @@ error_log = /var/log/php_errors.log
 
 ; Limites de Execução
 max_execution_time = 30
-memory_limit = 128
+memory_limit = 256M
 max_input_vars = 1000
 max_input_time = 60
 
