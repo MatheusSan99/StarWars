@@ -14,20 +14,13 @@ use StarWars\Helper\HtmlRendererTrait;
 class Error404Controller implements RequestHandlerInterface
 {
     use HtmlRendererTrait;
-    private LoggerInterface $logger;
 
-    public function __construct(LoggerInterface $logger)
-    {
-        $this->logger = $logger;
-    }
     
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $html = $this->renderTemplate('Erro/not-found', [
+        $html = $this->renderTemplate('Error/not-found', [
             'title' => 'Perdido?'
         ]);
-
-        $this->logger->info('Usuário tentou acessar uma página inexistente: ' . $request->getUri()->getPath());
 
         return new Response(200, [], $html);
     }

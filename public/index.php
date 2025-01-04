@@ -9,11 +9,11 @@ date_default_timezone_set('America/Sao_Paulo');
 require_once __DIR__ . '/../vendor/autoload.php';
 $routes = require_once __DIR__ . '/../config/routes.php';
 /** @var \Psr\Container\ContainerInterface $diContainer */
-$diContainer = require_once __DIR__ . '/../config/dependencies.php';
+$diContainer = require_once __DIR__ . '/../config/dependencies.php'; 
+$containerBuilder = new \DI\ContainerBuilder();  
 
-require_once __DIR__ . "../../setupdb.php";
-require_once __DIR__ . "../../errorHandler.php";
-
+$diContainer($containerBuilder); 
+$diContainer = $containerBuilder->build();
 $pathInfo = $_SERVER['PATH_INFO'] ?? '/';
 $httpMethod = $_SERVER['REQUEST_METHOD'];
 session_start();
@@ -26,18 +26,19 @@ if (!array_key_exists('logged', $_SESSION) && !$isLoginRoute && !$isCreateAccoun
     return;
 }
 
-
 $key = "$httpMethod|$pathInfo";
-if (array_key_exists($key, $routes)) {
+
+if (property_exists($routes, $key)) {
     [$controllerClass, $method] = $routes[$key];
     $controller = $diContainer->get($controllerClass);
 
     if (!method_exists($controller, $method)) {
-        $controller = new Error404Controller();
+        $controller = $diContainer->get(Error404Controller::class);
         $method = 'handle';
     }
 } else {
-    $controller = new Error404Controller();
+    $controller = $diContainer->get(Error404Controller::class);
+
     $method = 'handle';
 }
 
