@@ -100,7 +100,6 @@ class CharactersController
         try {
             $filmId = $args['filmId'];
 
-            
             $Film = $this->getFilmCase->execute($filmId);
             
             $CharactersIds = $Film->getCharacters();

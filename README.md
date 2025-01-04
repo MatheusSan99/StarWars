@@ -46,6 +46,7 @@ Abaixo estão os links para documentos detalhados de cada parte do projeto:
    - Ferramentas utilizadas e como executar os testes localmente.
 
 9. **[Deploy](Documentation/deploy.md)**
-   - Deploy do projeto na AWS
+   - Deploy do projeto na AWS (ip dinamico)
+   - Deploy do projeto no [render](https://starwars-x6tc.onrender.com)
 
 Este projeto foi projetado para ser fácil de instalar, explorar e escalar.

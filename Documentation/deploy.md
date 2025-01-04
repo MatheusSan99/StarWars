@@ -2,6 +2,9 @@
 
 Este projeto foi implantado na **AWS** utilizando uma instância EC2, proporcionando alta disponibilidade, escalabilidade e flexibilidade para a aplicação. Abaixo estão as etapas detalhadas do processo de deploy:
 
+## **Deploy na Plataforma Render**
+Além do deploy na AWS, a aplicação foi implantada com sucesso na plataforma Render, disponível no endereço https://starwars-x6tc.onrender.com. A flexibilidade do Docker permitiu que o mesmo ambiente fosse replicado facilmente na Render, destacando a portabilidade e a consistência entre os ambientes.
+
 ### **Etapas de Deploy**
 
 1. **Criação da Instância EC2**

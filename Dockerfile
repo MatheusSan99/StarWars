@@ -76,6 +76,8 @@ WORKDIR /var/www/html
 RUN composer install --no-dev --no-interaction --no-progress --no-suggest --optimize-autoloader --verbose
 RUN composer dump-autoload --no-dev --optimize
 
+RUN mv /var/www/html/.env.example /var/www/html/.env
+
 # Torna o start.sh executável
 RUN chmod +x /var/www/html/start.sh
 

@@ -47,11 +47,36 @@ A configuração do Nginx foi feita do zero, atendendo aos requisitos da aplica�
   - Configuração simplificada para suporte eficiente a cache.
   - Flexibilidade para adicionar cabeçalhos de segurança no futuro.
 
-**Benefícios:**
-- Entrega rápida de conteúdo estático e dinâmico.
-- Configuração modular e extensível.
+### **Benefícios:**
 
----
+### **1. Desempenho Superior**
+- **Eficiência na Manipulação de Requisições:** O Nginx é projetado para lidar com um grande número de conexões simultâneas graças ao seu modelo de eventos assíncronos e não bloqueantes, diferente do servidor embutido do PHP, que segue um modelo síncrono.
+- **Entrega de Conteúdo Estático:** O Nginx é altamente otimizado para servir arquivos estáticos (imagens, CSS, JavaScript, etc.), aliviando a carga do PHP-FPM.
+
+### **2. Proxy Reverso e Balanceamento de Carga**
+- **Proxy Reverso:** O Nginx pode atuar como proxy reverso, roteando as requisições para diferentes backends (como PHP-FPM ou outros serviços).
+- **Balanceamento de Carga:** Ele pode distribuir requisições entre múltiplos servidores, facilitando a escalabilidade horizontal.
+
+### **3. Cache Integrado**
+- O Nginx pode ser configurado para armazenar respostas em cache, reduzindo a carga no backend e melhorando a velocidade de entrega para os usuários.
+
+### **4. Segurança**
+- **Suporte a HTTPS:** Configuração simples e eficiente para habilitar TLS/SSL, garantindo a criptografia das comunicações.
+- **Proteção contra Ataques:** Com módulos adicionais, o Nginx pode mitigar ataques DDoS e filtrar requisições maliciosas.
+- **Cabeçalhos de Segurança:** Permite configurar headers como `Content-Security-Policy`, `X-Frame-Options` e outros, melhorando a segurança do frontend.
+
+### **5. Modularidade e Flexibilidade**
+- **Configurações Avançadas:** O Nginx oferece grande flexibilidade para configurar redirecionamentos, reescritas de URL, limites de requisição e mais.
+- **Compatibilidade com PHP-FPM:** Trabalha de forma eficiente com PHP-FPM para processar requisições dinâmicas, separando o processamento PHP do servidor web.
+
+### **6. Robustez em Produção**
+- O servidor embutido do PHP é recomendado apenas para desenvolvimento, pois:
+  - Não é otimizado para alto tráfego ou cargas simultâneas.
+  - Carece de recursos avançados de configuração e segurança.
+  - É menos confiável em termos de estabilidade.
+
+### **7. Logs e Monitoramento**
+- O Nginx oferece logs detalhados de acesso e erros, facilitando a análise de tráfego e a identificação de problemas.
 
 ## **Banco de Dados: SQLite**
 O projeto utiliza o banco de dados **SQLite** devido à sua simplicidade e eficiência:
