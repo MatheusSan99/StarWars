@@ -7,17 +7,11 @@ define('PROJECT_PUBLIC', './../../../public');
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, shrink-to-fit=no'
-        name='viewport' />
-
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, shrink-to-fit=no' name='viewport' />
     <link rel="stylesheet" href="<?php echo PROJECT_PUBLIC; ?>/css/reset.css">
     <link rel="stylesheet" href="<?php echo PROJECT_PUBLIC; ?>/css/bootstrap.min.css">
     <link rel="stylesheet" href="<?php echo PROJECT_PUBLIC; ?>/css/now-ui-kit.css?v=1.3.0" rel="stylesheet">
     <link rel="stylesheet" href="<?php echo PROJECT_PUBLIC; ?>/css/main.css">
-    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700,200" rel="stylesheet" /> 
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css"
-      integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
     <?php if (isset($title)): ?>
         <title><?php echo $title; ?></title>
     <?php else: ?>
@@ -25,7 +19,6 @@ define('PROJECT_PUBLIC', './../../../public');
     <?php endif; ?>
     <link rel="shortcut icon" href="<?php echo PROJECT_PUBLIC; ?>/img/icons/dark.png" type="image/x-icon">
 </head>
-
 <body>
     <header>
         <nav class="navbar navbar-expand-lg bg-primary fixed-top navbar-transparent " color-on-scroll="400">
@@ -45,7 +38,6 @@ define('PROJECT_PUBLIC', './../../../public');
                     </div>
                 </div>
             </div>
-
             <?php if (!empty($_SESSION['logged'])): ?>
                 <ul class="nav">
                 <li class="nav-item" id="documentation">
@@ -61,9 +53,7 @@ define('PROJECT_PUBLIC', './../../../public');
                 </ul>
             <?php endif; ?>
         </nav>
-
     </header>
-
     <?php if (isset($_SESSION['error_message']) || isset($_SESSION['success_message'])): ?>
         <div class="notification-container">
             <?php if (isset($_SESSION['error_message'])): ?>

@@ -1,8 +1,9 @@
 <?php
 require_once __DIR__ . './../template/ini-html.php';
 ?>
-
-<body class="login-page sidebar-collapse">
+<header>
+  <link rel="stylesheet" href="<?php echo PROJECT_PUBLIC; ?>/css/movies/movies-list.css">
+</header>
   <div class="page-header clear-filter" filter-color="orange">
     <main class="container mt-5">
       <div class="card card-body text-black">
@@ -15,15 +16,13 @@ require_once __DIR__ . './../template/ini-html.php';
             class="form-control"
             placeholder="Pesquisar (Nome do Filme, Diretor, Produtores, Data de Lançamento)" onkeyup="searchMovieFromCatalog()">
         </div>
-
         <div class="table-responsive">
-          <table class="table">
-            <table class="table" id="table-catalog">
-              <thead class="text-primary" id="thead-catalog">
-              </thead>
-              <tbody id="tbody-catalog">
-              </tbody>
-            </table>
+          <table class="table table-striped table-bordered" id="table-catalog">
+            <thead class="text-primary" id="thead-catalog">
+            </thead>
+            <tbody id="tbody-catalog">
+            </tbody>
+          </table>
         </div>
       </div>
     </main>

@@ -15,6 +15,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Slim\App;
 use Slim\Routing\RouteCollectorProxy;
 use StarWars\Middleware\AuthMiddleware;
+use StarWars\Middleware\CacheMiddleware;
 
 return function (App $app) {
     $app->options('/{routes:.*}', function (ServerRequestInterface $request, ResponseInterface $response, $args) {

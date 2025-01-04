@@ -5,6 +5,7 @@
   margin: 0 auto;
   padding: 20px;
   box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.2);
+  width: 100%;
 }
 
 body {
@@ -16,6 +17,7 @@ body {
   justify-content: center;
   min-height: 100vh;
   margin: 0;
+  padding: 10px;
 }
 
 #swagger-ui {
@@ -72,3 +74,41 @@ hgroup.main pre.version {
   font-weight: bold;
   margin: 0;
 }
+
+@media (max-width: 768px) {
+  .swagger-ui {
+    padding: 15px;
+    border-radius: 12px;
+    max-width: 100%;
+    box-shadow: none;
+  }
+
+  hgroup.main {
+    padding: 10px 15px;
+    font-size: 14px;
+  }
+
+  hgroup.main h2.title {
+    font-size: 18px;
+  }
+
+  hgroup.main pre.version {
+    font-size: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .swagger-ui {
+    padding: 10px;
+    border-radius: 8px;
+  }
+
+  hgroup.main h2.title {
+    font-size: 16px;
+  }
+
+  hgroup.main pre.version {
+    font-size: 8px;
+  }
+}
+

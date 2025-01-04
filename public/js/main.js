@@ -96,8 +96,8 @@ function enableLoadingGif() {
 
   const webp = document.createElement("img");
   webp.src = loadingGifPath;  
-  webp.width = "480";
-  webp.height = "274";
+  webp.width = "300";
+  webp.height = "150";
   webp.style.borderRadius = '15px';  
   webp.style.transition = 'all 0.5s ease';
   webp.id = "loadingGif";  

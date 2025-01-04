@@ -143,6 +143,7 @@ function addSortingFeature(th, theadRow) {
 function buildFilmRow(film) {
   const tr = document.createElement("tr");
 
+  // Botão de Visualizar Filme
   tr.appendChild(
     createTableCell(
       createActionButton(`film?id=${film.id}`, "Ver Filme", [
@@ -154,11 +155,20 @@ function buildFilmRow(film) {
     )
   );
 
-  tr.appendChild(createFilmCoverCell(film));
+  // Capa do filme com limitação de tamanho
+  const coverCell = createFilmCoverCell(film);
+  const coverImg = coverCell.querySelector("img");
+  coverImg.style.maxWidth = "100px"; // Restringe largura da imagem
+  coverImg.style.height = "auto";
+  tr.appendChild(coverCell);
+
+  // Outras células
   tr.appendChild(createTableCell(film.title));
   tr.appendChild(createTableCell(film.director));
   tr.appendChild(createTableCell(film.release_date));
   tr.appendChild(createTableCell(film.producers));
+
+  // Botão para Visualizar Personagens
   tr.appendChild(
     createTableCell(
       createActionButton(`film/${film.id}/characters`, "Visualizar", [
@@ -179,9 +189,10 @@ function buildFilmRow(film) {
       producers: film.producers,
     })
   );
-  
+
   return tr;
 }
+
 
 function createTableCell(content) {
   const td = document.createElement("td");

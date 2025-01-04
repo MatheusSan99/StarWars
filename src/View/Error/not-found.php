@@ -1,7 +1,6 @@
 <?php require_once __DIR__ . './../template/ini-html.php'; ?>
 <!DOCTYPE html>
-
-<body class="error-page sidebar-collapse">
+<div class="error-page sidebar-collapse">
   <div class="page-header clear-filter" filter-color="orange">
     <div class="page-header-image"></div>
     <div class="content">
@@ -23,4 +22,5 @@
       </div>
     </div>
   </div>
+</div>
   <?php require_once __DIR__ . './../template/end-html.php'; ?>

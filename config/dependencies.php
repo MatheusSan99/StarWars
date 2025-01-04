@@ -7,6 +7,7 @@ use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 use StarWars\Helper\PdoLogHandler;
 use StarWars\Middleware\AuthMiddleware;
+use StarWars\Middleware\CacheMiddleware;
 use StarWars\UseCases\Account\GetAccountByEmailCase;
 use StarWars\UseCases\Auth\AccountLoginCase;
 use StarWars\Repository\Account\AccountRepository;
@@ -94,6 +95,9 @@ return function (ContainerBuilder $containerBuilder) {
 
         AuthMiddleware::class => function (ContainerInterface $c) {
             return new AuthMiddleware($c->get(GetAccountByEmailCase::class), $c->get(LoggerInterface::class), $c->get(AuthService::class));
-        }
+        },
+        CacheMiddleware::class => function (ContainerInterface $c) {
+            return new CacheMiddleware();
+        },
     ]);
 };
