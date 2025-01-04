@@ -26,11 +26,6 @@ use StarWars\Exceptions\Auth\AuthenticationException;
  *     url="http://localhost:8080",
  *     description="Servidor local para desenvolvimento"
  * )
- * 
- * @OA\Server(
- *     url="http://ec2-54-233-33-0.sa-east-1.compute.amazonaws.com:8080/",
- *     description="Servidor de produção AWS"
- * )
  * @OA\Server(
  *     url="https://starwars-x6tc.onrender.com",
  *     description="Servidor de produção Render"
