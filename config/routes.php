@@ -53,6 +53,12 @@ return function (App $app) {
         });
     });
 
+    $app->map(['GET', 'POST', 'PUT', 'DELETE', 'PATCH'], '/gtf', function () use ($app) {
+        ob_start();
+        require_once __DIR__ . '/../src/View/gtf.php';
+        return new Response(403, [], ob_get_clean());
+    });
+
     $app->map(['GET', 'POST', 'PUT', 'DELETE', 'PATCH'], '/{routes:.+}', function () use ($app) {
         ob_start();
         require_once __DIR__ . '/../src/View/Error/not-found.php';
