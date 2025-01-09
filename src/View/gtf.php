@@ -1,7 +1,6 @@
 <?php
 require 'vendor/autoload.php';
 
-
 $curl = curl_init();
 $tableID = 'tabelagtf';
 $pagination = 1;
@@ -194,75 +193,119 @@ if (isset($_POST['exportar_pdf'])) {
 <head>
     <meta charset="UTF-8">
     <title>Gestão de Moldes</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <style>
+        .form-row {
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+        }
+
+        .btn {
+            transition: background-color 0.3s ease;
+        }
+
+        .btn:hover {
+            background-color: #0056b3 !important;
+        }
+
+        .table thead {
+            background-color: #007bff;
+            color: white;
+        }
+    </style>
 </head>
 
 <body>
-<div class="container">
-        <h2 class="my-4">Gestão de Moldes</h2>
-        <form method="post">
-            <div class="form-row">
-                <div class="form-group col-md-3">
-                    <label>Período de Início</label>
-                    <input type="date" name="periodo_inicio" class="form-control datepicker" value="<?= htmlspecialchars($start_date) ?>">
-                </div>
-                <div class="form-group col-md-3">
-                    <label>Período de Fim</label>
-                    <input type="date" name="periodo_fim" class="form-control datepicker" value="<?= htmlspecialchars($end_date) ?>">
-                </div>
-                <div class="form-group col-md-3">
-                    <label>Clientes</label>
-                    <select name="clientes[]" class="form-control" multiple>
-                        <?php
-                        $clients = array_unique(array_column($fieldValues, 'CLIENTE'));
-                        foreach ($clients as $client): ?>
-                            <option value="<?= htmlspecialchars($client) ?>" <?= in_array($client, $selected_clients) ? 'selected' : '' ?>>
-                                <?= htmlspecialchars($client) ?>
-                            </option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
-                <div class="form-group col-md-3">
-                    <button type="button" name="resetar_filtros" class="btn btn-danger" onclick="reset_filters();">Resetar Filtros</button>
-                </div>
+    <div class="container">
+        <h2 class="my-4 text-center">Gestão de Moldes</h2>
+
+        <div class="card shadow-sm">
+            <div class="card-header bg-primary text-white">
+                <h4 class="card-title mb-0">Filtros de Pesquisa</h4>
             </div>
-            <button type="submit" name="exibir_relatorio" class="btn btn-primary">Exibir Relatório</button>
-            <button type="submit" name="exportar_pdf" class="btn btn-danger">Exportar para PDF</button>
-        </form>
+            <div class="card-body">
+                <form method="post">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <label>Período de Início</label>
+                            <input type="date" name="periodo_inicio" class="form-control datepicker" value="<?= htmlspecialchars($start_date) ?>">
+                        </div>
+                        <div class="col-md-3">
+                            <label>Período de Fim</label>
+                            <input type="date" name="periodo_fim" class="form-control datepicker" value="<?= htmlspecialchars($end_date) ?>">
+                        </div>
+                        <div class="col-md-3">
+                            <label>Clientes</label>
+                            <select name="clientes[]" class="form-control" multiple>
+                                <?php
+                                $clients = array_unique(array_column($fieldValues, 'CLIENTE'));
+                                foreach ($clients as $client): ?>
+                                    <option value="<?= htmlspecialchars($client) ?>" <?= in_array($client, $selected_clients) ? 'selected' : '' ?>>
+                                        <?= htmlspecialchars($client) ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                        <div class="col-md-3 d-flex align-items-end">
+                            <button type="button" name="resetar_filtros" class="btn btn-danger w-100" onclick="reset_filters();">
+                                <i class="fas fa-sync-alt"></i> Resetar Filtros
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="mt-3 d-flex justify-content-between">
+                        <button type="submit" name="exibir_relatorio" class="btn btn-primary">
+                            <i class="fas fa-search"></i> Exibir Relatório
+                        </button>
+                        <button type="submit" name="exportar_pdf" class="btn btn-danger">
+                            <i class="fas fa-file-pdf"></i> Exportar para PDF
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
         <?php if (!empty($filtered_data)): ?>
-            <table class="table table-bordered mt-4">
-                <thead>
-                    <tr>
-                        <th>PV</th>
-                        <th>IMAGEM</th>
-                        <th>NOME DA PEÇA</th>
-                        <th>DATA T0</th>
-                        <th>CLIENTE</th>
-                        <th>TRANSFORMADOR</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach ($filtered_data as $data): ?>
+            <div class="table-responsive mt-4">
+                <table class="table table-striped table-hover text-center">
+                    <thead>
                         <tr>
-                            <td><?= htmlspecialchars($data['PV'] ?? '') ?></td>
-                            <td>
-                                <?php if (!empty($data['imagem'])): ?>
-                                    <img src="<?= htmlspecialchars($data['imagem']) ?>" style="max-width: 250px; max-height: 250px; width: auto; height: auto;">
-                                <?php endif; ?>
-                            </td>
-                            <td><?= htmlspecialchars($data['NOMEPECA'] ?? '') ?></td>
-                            <td><?= htmlspecialchars($data['DATAT0'] ?? '') ?></td>
-                            <td><?= htmlspecialchars($data['CLIENTE'] ?? '') ?></td>
-                            <td><?= htmlspecialchars($data['TRANSFORMADOR'] ?? '') ?></td>
+                            <th>PV</th>
+                            <th>IMAGEM</th>
+                            <th>NOME DA PEÇA</th>
+                            <th>DATA T0</th>
+                            <th>CLIENTE</th>
+                            <th>TRANSFORMADOR</th>
                         </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($filtered_data as $data): ?>
+                            <tr>
+                                <td><?= htmlspecialchars($data['PV'] ?? '') ?></td>
+                                <td>
+                                    <?php if (!empty($data['imagem'])): ?>
+                                        <img src="<?= htmlspecialchars($data['imagem']) ?>" class="img-fluid" style="max-width: 150px; max-height: 150px;">
+                                    <?php endif; ?>
+                                </td>
+                                <td><?= htmlspecialchars($data['NOMEPECA'] ?? '') ?></td>
+                                <td><?= htmlspecialchars($data['DATAT0'] ?? '') ?></td>
+                                <td><?= htmlspecialchars($data['CLIENTE'] ?? '') ?></td>
+                                <td><?= htmlspecialchars($data['TRANSFORMADOR'] ?? '') ?></td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
         <?php else: ?>
-            <p class="mt-4">Nenhum dado encontrado com os filtros aplicados.</p>
+            <p class="mt-4 text-center">Nenhum dado encontrado com os filtros aplicados.</p>
         <?php endif; ?>
     </div>
 
@@ -276,6 +319,10 @@ if (isset($_POST['exportar_pdf'])) {
         function reset_filters() {
             $('input[type="date"]').val('');
             $('select').val('');
+        }
+
+        function showLoader() {
+            document.getElementById('loading-spinner').style.display = 'block';
         }
     </script>
 </body>
