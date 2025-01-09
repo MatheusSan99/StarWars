@@ -245,51 +245,51 @@ if (isset($_POST['exportar_pdf'])) {
         }
     </style>
 </head>
-
 <body>
-    <div class="container">
-        <h2 class="my-4 text-center">Gestão de Moldes</h2>
-
-        <div class="card-body">
+<div class="container">
+    <h2 class="my-4 text-center">Gestão de Moldes</h2>
     <form method="post">
-        <div class="row">
-            <div class="col-md-3">
-                <label>Período de Início</label>
-                <input type="date" name="periodo_inicio" class="form-control datepicker" value="<?= htmlspecialchars($start_date) ?>">
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3">
+                        <label for="periodo_inicio">Período de Início</label>
+                        <input type="date" id="periodo_inicio" name="periodo_inicio" class="form-control datepicker" 
+                               value="<?= htmlspecialchars($start_date) ?>">
+                    </div>
+                    <div class="col-md-3">
+                        <label for="periodo_fim">Período de Fim</label>
+                        <input type="date" id="periodo_fim" name="periodo_fim" class="form-control datepicker" 
+                               value="<?= htmlspecialchars($end_date) ?>">
+                    </div>
+                    <div class="col-md-4">
+                        <label for="clientes">Clientes</label>
+                        <select id="clientes" name="clientes[]" class="form-control" multiple>
+                            <?php
+                            $clients = array_unique(array_column($fieldValues, 'CLIENTE'));
+                            foreach ($clients as $client): ?>
+                                <option value="<?= htmlspecialchars($client) ?>" <?= in_array($client, $selected_clients) ? 'selected' : '' ?>>
+                                    <?= htmlspecialchars($client) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                </div>
+                <div class="mt-4 d-flex flex-wrap gap-3">
+                    <button type="submit" name="exibir_relatorio" class="btn btn-primary">
+                        <i class="fas fa-search"></i> Exibir Relatório
+                    </button>
+                    <button type="button" name="resetar_filtros" class="btn btn-danger">
+                        <i class="fas fa-sync-alt"></i> Resetar Filtros
+                    </button>
+                    <button type="submit" name="exportar_pdf" class="btn btn-danger">
+                        <i class="fas fa-file-pdf"></i> Exportar para PDF
+                    </button>
+                </div>
             </div>
-            <div class="col-md-3">
-                <label>Período de Fim</label>
-                <input type="date" name="periodo_fim" class="form-control datepicker" value="<?= htmlspecialchars($end_date) ?>">
-            </div>
-            <div class="col-md-3">
-                <label>Clientes</label>
-                <select name="clientes[]" class="form-control" multiple>
-                    <?php
-                    $clients = array_unique(array_column($fieldValues, 'CLIENTE'));
-                    foreach ($clients as $client): ?>
-                        <option value="<?= htmlspecialchars($client) ?>" <?= in_array($client, $selected_clients) ? 'selected' : '' ?>>
-                            <?= htmlspecialchars($client) ?>
-                        </option>
-                    <?php endforeach; ?>
-                </select>
-            </div>
-        </div>
-
-        <!-- Botões lado a lado -->
-        <div class="mt-3 d-flex gap-2">
-            <button type="button" name="resetar_filtros" class="btn btn-danger">
-                <i class="fas fa-sync-alt"></i> Resetar Filtros
-            </button>
-            <button type="submit" name="exibir_relatorio" class="btn btn-primary">
-                <i class="fas fa-search"></i> Exibir Relatório
-            </button>
-            <button type="submit" name="exportar_pdf" class="btn btn-danger">
-                <i class="fas fa-file-pdf"></i> Exportar para PDF
-            </button>
         </div>
     </form>
 </div>
-
         <?php if (!empty($filtered_data)): ?>
             <div class="table-responsive mt-4">
                 <table class="table table-striped table-hover text-center">
@@ -325,7 +325,6 @@ if (isset($_POST['exportar_pdf'])) {
             <p class="mt-4 text-center">Nenhum dado encontrado com os filtros aplicados.</p>
         <?php endif; ?>
     </div>
-
     <script>
         $(function() {
             $(".datepicker").datepicker({
@@ -343,5 +342,4 @@ if (isset($_POST['exportar_pdf'])) {
         }
     </script>
 </body>
-
 </html>
