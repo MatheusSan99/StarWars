@@ -243,6 +243,29 @@ if (isset($_POST['exportar_pdf'])) {
             background-color: #007bff;
             color: white;
         }
+        body {
+        background: linear-gradient(to bottom, #f8f9fa, #e9ecef);
+        min-height: 100vh;
+        margin: 0;
+        font-family: Arial, sans-serif;
+        }
+        .container {
+            max-width: 900px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+        .card-body label {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .btn {
+            min-width: 150px;
+        }
+        .gap-3 {
+            gap: 15px !important;
+        }
     </style>
 </head>
 <body>
