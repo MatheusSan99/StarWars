@@ -3,7 +3,8 @@ require 'vendor/autoload.php';
 
 $curl = curl_init();
 $tableID = 'tabelagtf';
-$pagination = 1;
+$actualPage = 1;
+$totalPages = 1;
 $GLOBALS['domain'] = 'https://isc.softexpert.com/';
 $GLOBALS['authorization'] = 'eyJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE3MzYyNTU3MDAsImV4cCI6MTg5NDAyMjEwMCwiaWRsb2dpbiI6Im1hdGhldXMuc29saXZlaXJhIn0.B70gvuMLiQRVf3oA2k3ZZnaQn5Rl-38Fe57q7IcEDvQ';
 $essentialFields = ['PV', 'NOMEPECA', 'DATAT0', 'CLIENTE', 'TRANSFORMADOR', 'imagem'];
@@ -12,7 +13,16 @@ $start_date = $_POST['periodo_inicio'] ?? '';
 $end_date = $_POST['periodo_fim'] ?? '';
 $selected_clients = $_POST['clientes'] ?? [];
 
-function makeCurlRequest($endpoint, $headers = [], $postFields = null, $method = 'GET') {
+function displayError($message)
+{
+    echo '<div style="color: white; background-color: red; padding: 10px; margin: 10px 0; border-radius: 5px;">';
+    echo htmlspecialchars($message);
+    echo '</div>';
+    exit;
+}
+
+function makeCurlRequest($endpoint, $headers = [], $postFields = null, $method = 'GET')
+{
     $curl = curl_init();
 
     $options = [
@@ -39,7 +49,8 @@ function makeCurlRequest($endpoint, $headers = [], $postFields = null, $method =
     return $response;
 }
 
-function exportToPDF($data) {
+function exportToPDF($data)
+{
     $pdf = new \TCPDF();
 
     $pdf->SetCreator('Gestão de Moldes');
@@ -97,38 +108,46 @@ function exportToPDF($data) {
     exit;
 }
 
-function getImageContent($fileHash) {
+function getImageContent($fileHash)
+{
     $imageData = makeCurlRequest('apigateway/v1/file/' . $fileHash, ['Authorization: ' . $GLOBALS['authorization']]);
     return 'data:image/png;base64,' . base64_encode($imageData);
 }
 
-function getTableRecord($tableID, $pagination) {
+function getTableRecord($tableID, $actualPage)
+{
     $headers = [
         'Content-Type: text/xml; charset=utf-8',
         'SOAPAction: urn:form#getTableRecord',
         'Authorization: ' . $GLOBALS['authorization']
     ];
-    
+
     $postFields = '<?xml version="1.0" encoding="utf-8"?>
     <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
       <soap:Body>
         <tns:getTableRecord xmlns="urn:form">
           <tns:TableID>' . $tableID . '</tns:TableID>
-          <tns:Pagination>' . $pagination . '</tns:Pagination>
+          <tns:Pagination>' . $actualPage . '</tns:Pagination>
         </tns:getTableRecord>
       </soap:Body>
     </soap:Envelope>';
 
-    $xmlString = makeCurlRequest('apigateway/se/ws/fm_ws.php', $headers, $postFields, 'POST');
+    try {
+        $xmlString = makeCurlRequest('apigateway/se/ws/fm_ws.php', $headers, $postFields, 'POST');
+    } catch (Exception $e) {
+        displayError('Erro ao buscar os dados da tabela: ' . $tableID);
+    }
 
+    $xmlString = makeCurlRequest('apigateway/se/ws/fm_ws.php', $headers, $postFields, 'POST');
     $xml = simplexml_load_string($xmlString, 'SimpleXMLElement', LIBXML_NOCDATA);
     if ($xml === false) {
-        die("Erro ao carregar o XML.");
+        displayError('Erro ao processar os dados da tabela: ' . $tableID);
     }
     return $xml;
 }
 
-function formatTableRecord($xml, $essentialFields) {
+function formatTableRecord($xml, $essentialFields)
+{
     $namespaces = $xml->getNamespaces(true);
     $body = $xml->children($namespaces['SOAP-ENV'])->Body;
     $response = $body->children($namespaces[''])->getTableRecordResponse;
@@ -143,7 +162,7 @@ function formatTableRecord($xml, $essentialFields) {
             $fieldValue = (string)$field->TableFieldValue;
 
             if ($fieldId === 'OID') {
-                $oid = $fieldValue; 
+                $oid = $fieldValue;
             }
 
             if (in_array($fieldId, $essentialFields)) {
@@ -167,7 +186,8 @@ function formatTableRecord($xml, $essentialFields) {
     return $fieldValues;
 }
 
-function filterDataFromFrontend($fieldValue, $start_date = null, $end_date = null, $selected_clients = []) {
+function filterDataFromFrontend($fieldValue, $start_date = null, $end_date = null, $selected_clients = [])
+{
     return array_filter($fieldValue, function ($item) use ($start_date, $end_date, $selected_clients) {
         $data_item = isset($item['DATAT0']) ? new DateTime($item['DATAT0']) : null;
         $start = $start_date ? new DateTime($start_date) : null;
@@ -179,9 +199,13 @@ function filterDataFromFrontend($fieldValue, $start_date = null, $end_date = nul
     });
 }
 
-$xml = getTableRecord($tableID, $pagination);
-$fieldValues = formatTableRecord($xml, $essentialFields);
-$filtered_data = filterDataFromFrontend($fieldValues, $start_date, $end_date, $selected_clients);
+try {
+    $xml = getTableRecord($tableID, $actualPage);
+    $fieldValues = formatTableRecord($xml, $essentialFields);
+    $filtered_data = filterDataFromFrontend($fieldValues, $start_date, $end_date, $selected_clients);
+} catch (Exception $e) {
+    displayError('Erro ao buscar os dados da tabela: ' . $tableID);
+}
 if (isset($_POST['exportar_pdf'])) {
     exportToPDF($filtered_data);
 }
@@ -189,7 +213,6 @@ if (isset($_POST['exportar_pdf'])) {
 
 <!DOCTYPE html>
 <html lang="pt-br">
-
 <head>
     <meta charset="UTF-8">
     <title>Gestão de Moldes</title>
@@ -227,51 +250,45 @@ if (isset($_POST['exportar_pdf'])) {
     <div class="container">
         <h2 class="my-4 text-center">Gestão de Moldes</h2>
 
-        <div class="card shadow-sm">
-            <div class="card-header bg-primary text-white">
-                <h4 class="card-title mb-0">Filtros de Pesquisa</h4>
+        <div class="card-body">
+    <form method="post">
+        <div class="row">
+            <div class="col-md-3">
+                <label>Período de Início</label>
+                <input type="date" name="periodo_inicio" class="form-control datepicker" value="<?= htmlspecialchars($start_date) ?>">
             </div>
-            <div class="card-body">
-                <form method="post">
-                    <div class="row">
-                        <div class="col-md-3">
-                            <label>Período de Início</label>
-                            <input type="date" name="periodo_inicio" class="form-control datepicker" value="<?= htmlspecialchars($start_date) ?>">
-                        </div>
-                        <div class="col-md-3">
-                            <label>Período de Fim</label>
-                            <input type="date" name="periodo_fim" class="form-control datepicker" value="<?= htmlspecialchars($end_date) ?>">
-                        </div>
-                        <div class="col-md-3">
-                            <label>Clientes</label>
-                            <select name="clientes[]" class="form-control" multiple>
-                                <?php
-                                $clients = array_unique(array_column($fieldValues, 'CLIENTE'));
-                                foreach ($clients as $client): ?>
-                                    <option value="<?= htmlspecialchars($client) ?>" <?= in_array($client, $selected_clients) ? 'selected' : '' ?>>
-                                        <?= htmlspecialchars($client) ?>
-                                    </option>
-                                <?php endforeach; ?>
-                            </select>
-                        </div>
-                        <div class="col-md-3 d-flex align-items-end">
-                            <button type="button" name="resetar_filtros" class="btn btn-danger w-100" onclick="reset_filters();">
-                                <i class="fas fa-sync-alt"></i> Resetar Filtros
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="mt-3 d-flex justify-content-between">
-                        <button type="submit" name="exibir_relatorio" class="btn btn-primary">
-                            <i class="fas fa-search"></i> Exibir Relatório
-                        </button>
-                        <button type="submit" name="exportar_pdf" class="btn btn-danger">
-                            <i class="fas fa-file-pdf"></i> Exportar para PDF
-                        </button>
-                    </div>
-                </form>
+            <div class="col-md-3">
+                <label>Período de Fim</label>
+                <input type="date" name="periodo_fim" class="form-control datepicker" value="<?= htmlspecialchars($end_date) ?>">
+            </div>
+            <div class="col-md-3">
+                <label>Clientes</label>
+                <select name="clientes[]" class="form-control" multiple>
+                    <?php
+                    $clients = array_unique(array_column($fieldValues, 'CLIENTE'));
+                    foreach ($clients as $client): ?>
+                        <option value="<?= htmlspecialchars($client) ?>" <?= in_array($client, $selected_clients) ? 'selected' : '' ?>>
+                            <?= htmlspecialchars($client) ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
             </div>
         </div>
+
+        <!-- Botões lado a lado -->
+        <div class="mt-3 d-flex gap-2">
+            <button type="button" name="resetar_filtros" class="btn btn-danger">
+                <i class="fas fa-sync-alt"></i> Resetar Filtros
+            </button>
+            <button type="submit" name="exibir_relatorio" class="btn btn-primary">
+                <i class="fas fa-search"></i> Exibir Relatório
+            </button>
+            <button type="submit" name="exportar_pdf" class="btn btn-danger">
+                <i class="fas fa-file-pdf"></i> Exportar para PDF
+            </button>
+        </div>
+    </form>
+</div>
 
         <?php if (!empty($filtered_data)): ?>
             <div class="table-responsive mt-4">
