@@ -302,7 +302,7 @@ if (isset($_POST['exportar_pdf'])) {
                     <button type="submit" name="exibir_relatorio" class="btn btn-primary">
                         <i class="fas fa-search"></i> Exibir Relatório
                     </button>
-                    <button type="button" name="resetar_filtros" class="btn btn-danger">
+                    <button type="button" name="resetar_filtros" class="btn btn-danger" onclick="reset_filters();">
                         <i class="fas fa-sync-alt"></i> Resetar Filtros
                     </button>
                     <button type="submit" name="exportar_pdf" class="btn btn-danger">
@@ -358,10 +358,6 @@ if (isset($_POST['exportar_pdf'])) {
         function reset_filters() {
             $('input[type="date"]').val('');
             $('select').val('');
-        }
-
-        function showLoader() {
-            document.getElementById('loading-spinner').style.display = 'block';
         }
     </script>
 </body>
