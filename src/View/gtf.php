@@ -11,9 +11,6 @@ $GLOBALS['dataset'] = 'apigateway/v1/dataset-integration/matheusteste';
 $GLOBALS['authorization'] = 'eyJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE3MzYyNTU3MDAsImV4cCI6MTg5NDAyMjEwMCwiaWRsb2dpbiI6Im1hdGhldXMuc29saXZlaXJhIn0.B70gvuMLiQRVf3oA2k3ZZnaQn5Rl-38Fe57q7IcEDvQ';
 $essentialFields = ['pv', 'imagem', 'nomepeca', 'datat0', 'cliente', 'transformador'];
 $responseData = [];
-$start_date = $_POST['periodo_inicio'] ?? '';
-$end_date = $_POST['periodo_fim'] ?? '';
-$selected_clients = $_POST['clientes'] ?? [];
 
 function getDatasetResult()
 {
@@ -64,111 +61,6 @@ function makeCurlRequest($endpoint, $headers = [], $postFields = null, $method =
     return $response;
 }
 
-class MYPDF extends \TCPDF
-{
-    // Método para o cabeçalho
-    public function Header()
-    {
-        // Caminho da imagem do cabeçalho
-        $image_file = __DIR__ . '/../../public/img/backgrounds/background-characters.jpg';
-        
-        // Verifica se a imagem existe antes de tentar carregá-la
-        if (file_exists($image_file)) {
-            $this->Image($image_file, 10, 10, 40, 15, 'JPG', '', 'T', false, 300, '', false, false, 0, false, false, false);
-        } else {
-            error_log("Imagem de cabeçalho não encontrada: $image_file");
-        }
-        
-        // Define a fonte para o título no cabeçalho
-        $this->SetFont('helvetica', 'B', 20);
-        $this->SetXY(55, 10); // Ajusta a posição após a imagem
-        $this->Cell(0, 15, 'Relatório de Moldes', 0, false, 'L', 0, '', 0, false, 'M', 'M');
-    }
-
-    // Método para o rodapé
-    public function Footer()
-    {
-        // Posiciona 15 mm do final da página
-        $this->SetY(-15);
-        // Define a fonte para o rodapé
-        $this->SetFont('helvetica', 'I', 8);
-        // Exibe o número da página
-        $this->Cell(0, 10, 'Página ' . $this->getAliasNumPage() . '/' . $this->getAliasNbPages(), 0, false, 'C', 0, '', 0, false, 'T', 'M');
-    }
-}
-
-function exportToPDF($data)
-{
-    $pdf = new MYPDF();
-
-    // Configurações do PDF
-    $pdf->SetCreator('Gestão de Moldes');
-    $pdf->SetAuthor('Sistema');
-    $pdf->SetTitle('Relatório de Moldes');
-    $pdf->SetMargins(15, 27, 15); // Margens
-    $pdf->SetHeaderMargin(5);
-    $pdf->SetFooterMargin(10);
-    $pdf->SetAutoPageBreak(true, 25);
-
-    // Adiciona a página
-    $pdf->AddPage();
-
-    // Conteúdo principal do PDF
-    $pdf->SetFont('helvetica', '', 12);
-    $html = '<style>
-                table {
-                    border-collapse: collapse;
-                    width: 100%;
-                }
-                th {
-                    background-color: #007bff;
-                    color: white;
-                    text-align: center;
-                }
-                td {
-                    text-align: center;
-                }
-                table, th, td {
-                    border: 1px solid #ddd;
-                }
-            </style>';
-    $html .= '<table>
-        <thead>
-            <tr>
-                <th>PV</th>
-                <th>Imagem</th>
-                <th>Nome da Peça</th>
-                <th>Data T0</th>
-                <th>Cliente</th>
-                <th>Transformador</th>
-            </tr>
-        </thead>
-        <tbody>';
-
-    foreach ($data as $row) {
-        $html .= '<tr>
-            <td>' . htmlspecialchars($row['pv'] ?? '') . '</td>
-            <td>';
-        if (!empty($row['imagem'])) {
-            $html .= '<img src="' . htmlspecialchars($row['imagem']) . '" width="50" height="50" />';
-        }
-        $html .= '</td>
-            <td>' . htmlspecialchars($row['nomepeca'] ?? '') . '</td>
-            <td>' . htmlspecialchars($row['datat0'] ?? '') . '</td>
-            <td>' . htmlspecialchars($row['cliente'] ?? '') . '</td>
-            <td>' . htmlspecialchars($row['transformador'] ?? '') . '</td>
-        </tr>';
-    }
-
-    $html .= '</tbody></table>';
-
-    $pdf->writeHTML($html, true, false, true, false, '');
-
-    // Gera o PDF
-    $pdf->Output('relatorio_moldes.pdf', 'D');
-    exit;
-}
-
 function getImageContent($fileHash)
 {
     $imageData = makeCurlRequest('apigateway/v1/file/' . $fileHash, ['Authorization: ' . $GLOBALS['authorization']]);
@@ -213,43 +105,55 @@ function getTableRecord($tableID, $tablePrimaryKey, $jsonResponse)
     }
 }
 
-function filterDataFromFrontend($fieldValue, $start_date = null, $end_date = null, $selected_clients = [])
+function loadData($tableID, $tablePrimaryKey)
 {
-    return array_filter($fieldValue, function ($item) use ($start_date, $end_date, $selected_clients) {
-        $data_item = isset($item['datat0']) ? new DateTime($item['datat0']) : null;
-        $start = $start_date ? new DateTime($start_date) : null;
-        $end = $end_date ? new DateTime($end_date) : null;
-        if ($start && $data_item < $start) return false;
-        if ($end && $data_item > $end) return false;
-        if (!empty($selected_clients) && !in_array($item['cliente'], $selected_clients)) return false;
-        return true;
-    });
+    try {
+        $jsonResultsList = getDatasetResult();
+        $data = [];
+        foreach ($jsonResultsList as $jsonResult) {
+            $data[$jsonResult[$tablePrimaryKey]] = getTableRecord($tableID, $tablePrimaryKey, $jsonResult);
+        }
+
+        echo json_encode($data);
+        exit;
+    } catch (Exception $e) {
+        displayError('Erro ao buscar os dados da tabela: ' . $tableID);
+    }
 }
 
-try {
-    $jsonResultsList = getDatasetResult();
-    $fieldValues = [];
-    foreach ($jsonResultsList as $jsonResult) {
-        $fieldValues[$jsonResult[$tablePrimaryKey]] = getTableRecord($tableID, $tablePrimaryKey, $jsonResult);
-    }
-    $filtered_data = filterDataFromFrontend($fieldValues, $start_date, $end_date, $selected_clients);
-} catch (Exception $e) {
-    displayError('Erro ao buscar os dados da tabela: ' . $tableID);
-}
-if (isset($_POST['exportar_pdf'])) {
-    exportToPDF($filtered_data);
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    loadData($tableID, $tablePrimaryKey);
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
     <meta charset="UTF-8">
     <title>Gestão de Moldes</title>
-    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" . <?=uniqid()?>>
-    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" . <?=uniqid()?>>
-    <link rel="stylesheet" type="text/css" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" . <?=uniqid()?>>
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" . <?= uniqid() ?>>
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" . <?= uniqid() ?>>
     <style>
+        body {
+            background: linear-gradient(to bottom, #f8f9fa, #e9ecef);
+            min-height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding-top: 50px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            width: 100%;
+            max-width: 1200px;
+        }
+
         .form-row {
             background-color: #f9f9f9;
             border: 1px solid #ddd;
@@ -271,21 +175,6 @@ if (isset($_POST['exportar_pdf'])) {
             color: white;
         }
 
-        body {
-            background: linear-gradient(to bottom, #f8f9fa, #e9ecef);
-            min-height: 100vh;
-            margin: 0;
-            font-family: Arial, sans-serif;
-        }
-
-        .container {
-            max-width: 900px;
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-            padding: 20px;
-        }
-
         .card-body label {
             font-weight: bold;
             margin-bottom: 5px;
@@ -298,111 +187,302 @@ if (isset($_POST['exportar_pdf'])) {
         .gap-3 {
             gap: 15px !important;
         }
+
+        .pagination {
+            justify-content: center;
+        }
     </style>
 </head>
+
 <body>
     <div class="container">
         <h2 class="my-4 text-center">Gestão de Moldes</h2>
         <div class="card">
-        <div class="card">
-    <div class="card-body">
-        <form method="post">
-            <div class="row">
-                <!-- Filtros ocupando 33% cada -->
-                <div class="col-md-4">
-                    <label for="periodo_inicio">Período de Início</label>
-                    <input type="date" id="periodo_inicio" name="periodo_inicio" class="form-control datepicker"
-                        value="<?= htmlspecialchars($start_date) ?>">
-                </div>
-                <div class="col-md-4">
-                    <label for="periodo_fim">Período de Fim</label>
-                    <input type="date" id="periodo_fim" name="periodo_fim" class="form-control datepicker"
-                        value="<?= htmlspecialchars($end_date) ?>">
-                </div>
-                <div class="col-md-4">
-                    <label for="clientes">Clientes</label>
-                    <select id="clientes" name="clientes[]" class="form-control" multiple>
-                        <?php
-                        $clients = array_unique(array_column($fieldValues, 'cliente'));
-                        foreach ($clients as $client): ?>
-                            <option value="<?= htmlspecialchars($client) ?>" <?= in_array($client, $selected_clients) ? 'selected' : '' ?>>
-                                <?= htmlspecialchars($client) ?>
-                            </option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
+            <div class="card-body">
+                <form method="post" id="filters-form">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label for="start_date">Período de Início</label>
+                            <input type="date" id="start_date" name="start_date" class="form-control datepicker">
+                        </div>
+                        <div class="col-md-4">
+                            <label for="end_date">Período de Fim</label>
+                            <input type="date" id="end_date" name="end_date" class="form-control datepicker">
+                        </div>
+                        <div class="col-md-4">
+                            <label for="clientes">Clientes</label>
+                            <select id="clientes" name="clientes[]" class="form-control" multiple>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row mt-4">
+                        <div class="col-12 col-md-3 mb-2">
+                            <button type="button" name="exibir_relatorio" class="btn btn-primary btn-block" onclick="applyFilters();">
+                                <i class="fas fa-search"></i> Exibir Relatório
+                            </button>
+                        </div>
+                        <div class="col-12 col-md-3 mb-2">
+                            <button type="button" name="resetar_filtros" class="btn btn-danger btn-block" onclick="reset_filters();">
+                                <i class="fas fa-sync-alt"></i> Resetar Filtros
+                            </button>
+                        </div>
+                        <div class="col-12 col-md-3 mb-2">
+                            <button type="button" name="exportar_pdf" class="btn btn-danger btn-block" onclick="exportToPDF();">
+                                <i class="fas fa-file-pdf"></i> Exportar para PDF
+                            </button>
+                        </div>
+                        <div class="col-12 col-md-3 mb-2">
+                            <button type="button" class="btn btn-warning btn-block" id="reset-cache" onclick="event.preventDefault(); resetCache();">
+                                <i class="fas fa-trash-alt"></i> Limpar Cache
+                            </button>
+                        </div>
+                    </div>
+                </form>
             </div>
-            <div class="row mt-4">
-                <div class="col-md-4">
-                    <button type="submit" name="exibir_relatorio" class="btn btn-primary w-100">
-                        <i class="fas fa-search"></i> Exibir Relatório
-                    </button>
-                </div>
-                <div class="col-md-4">
-                    <button type="button" name="resetar_filtros" class="btn btn-danger w-100" onclick="reset_filters();">
-                        <i class="fas fa-sync-alt"></i> Resetar Filtros
-                    </button>
-                </div>
-                <div class="col-md-4">
-                    <button type="submit" name="exportar_pdf" class="btn btn-danger w-100">
-                        <i class="fas fa-file-pdf"></i> Exportar para PDF
-                    </button>
-                </div>
-            </div>
-        </form>
-    </div>
-</div>
-            <?php if (!empty($filtered_data)): ?>
-                <div class="table-responsive mt-4">
-                    <table class="table table-striped table-hover text-center">
-                        <thead class="table-dark">
-                            <tr>
-                                <th>PV</th>
-                                <th>IMAGEM</th>
-                                <th>NOME DA PEÇA</th>
-                                <th>DATA T0</th>
-                                <th>CLIENTE</th>
-                                <th>TRANSFORMADOR</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php foreach ($filtered_data as $data): ?>
-                                <tr>
-                                    <?php foreach ($essentialFields as $field): ?>
-                                        <?php if ($field == 'imagem'): ?>
-                                            <td>
-                                                <?php if (!empty($data[$field])): ?>
-                                                    <img src="<?= htmlspecialchars($data[$field]) ?>" class="img-fluid" style="max-width: 120px; max-height: 80px;">
-                                                <?php endif; ?>
-                                            </td>
-                                        <?php else: ?>
-                                            <td><?= htmlspecialchars($data[$field] ?? '') ?></td>
-                                        <?php endif; ?>
-                                    <?php endforeach; ?>
-                                </tr>
-                            <?php endforeach; ?>
-                        </tbody>
-                    </table>
-                </div>
-            <?php else: ?>
-                <p class="mt-4 text-center">Nenhum dado encontrado com os filtros aplicados.</p>
-            <?php endif; ?>
+        </div>
+        <div id="table-container" class="mt-4">
+        </div>
+        <div id="pagination-container" class="mt-4 text-center">
+            <button id="prev-page" class="btn btn-secondary" onclick="changePage(-1)">Anterior</button>
+            <span id="page-info">Página 1</span>
+            <button id="next-page" class="btn btn-secondary" onclick="changePage(1)">Próxima</button>
         </div>
     </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
     <script>
-        $(function() {
-            $(".datepicker").datepicker({
-                dateFormat: 'yy-mm-dd'
+        let currentPage = 1;
+        let totalPages = 1;
+        const recordsPerPage = 5;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            var datepickers = document.querySelectorAll('.datepicker');
+            datepickers.forEach(function(datepicker) {
+                datepicker.type = 'date';
             });
+            loadData();
         });
 
+        function loadClients(clients) {
+            const uniqueClients = [...new Set(clients)];
+
+            let select = document.getElementById('clientes');
+            select.innerHTML = '';
+            uniqueClients.forEach(client => {
+                let option = document.createElement('option');
+                option.value = client;
+                option.textContent = client;
+                select.appendChild(option);
+            });
+        }
+
+        function loadData() {
+            const form = document.getElementById('filters-form');
+            const formData = new FormData(form);
+            const queryString = new URLSearchParams(formData).toString();
+
+            const cache = localStorage.getItem('filtered_data');
+            const cacheTimestamp = localStorage.getItem('cache_timestamp');
+            const currentTime = new Date().getTime();
+
+            if (cache && cacheTimestamp && (currentTime - cacheTimestamp < 24 * 60 * 60 * 1000)) {
+                const filteredData = JSON.parse(cache);
+                totalPages = Math.ceil(filteredData.length / recordsPerPage);
+                displayTableData(filteredData);
+                loadClients(filteredData.map(item => item.cliente));
+                return;
+            }
+
+            let xhr = new XMLHttpRequest();
+            xhr.open('POST', '', true);
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    try {
+                        const filteredData = JSON.parse(xhr.responseText);
+                        totalPages = Math.ceil(filteredData.length / recordsPerPage);
+                        localStorage.setItem('filtered_data', JSON.stringify(filteredData));
+                        localStorage.setItem('cache_timestamp', currentTime);
+                        displayTableData(filteredData);
+                        loadClients(filteredData.map(item => item.cliente));
+                    } catch (e) {
+                        console.error('Erro ao processar a resposta JSON:', e);
+                    }
+                }
+            };
+
+            xhr.send(queryString);
+        }
+
+        function displayTableData(filteredData) {
+            const container = document.getElementById('table-container');
+            if (!filteredData || filteredData.length === 0) {
+                container.innerHTML = '<p class="text-center">Nenhum dado encontrado com os filtros aplicados.</p>';
+                return;
+            }
+
+            const startIndex = (currentPage - 1) * recordsPerPage;
+            const endIndex = startIndex + recordsPerPage;
+            const pageData = filteredData.slice(startIndex, endIndex);
+
+            let tableHTML = `
+    <div class="table-responsive">
+        <table class="table table-striped table-hover text-center">
+            <thead class="table-dark">
+                <tr>
+                    <th>PV</th>
+                    <th>IMAGEM</th>
+                    <th>NOME DA PEÇA</th>
+                    <th>DATA T0</th>
+                    <th>CLIENTE</th>
+                    <th>TRANSFORMADOR</th>
+                </tr>
+            </thead>
+            <tbody>
+    `;
+
+            pageData.forEach(item => {
+                tableHTML += `
+        <tr>
+            <td>${item.pv}</td>
+            <td><img src="${item.imagem}" class="img-fluid" style="max-width: 120px; max-height: 80px;"></td>
+            <td>${item.nomepeca}</td>
+            <td>${item.datat0}</td>
+            <td>${item.cliente}</td>
+            <td>${item.transformador}</td>
+        </tr>
+        `;
+            });
+
+            tableHTML += '</tbody></table></div>';
+            container.innerHTML = tableHTML;
+
+            updatePaginationControls();
+        }
+
+        function updatePaginationControls() {
+            document.getElementById('page-info').textContent = `Página ${currentPage} de ${totalPages}`;
+            document.getElementById('prev-page').disabled = currentPage === 1;
+            document.getElementById('next-page').disabled = currentPage === totalPages;
+        }
+
+        function changePage(direction) {
+            currentPage += direction;
+            currentPage = Math.max(1, Math.min(currentPage, totalPages));
+            loadData();
+        }
+
+        function resetCache() {
+            localStorage.removeItem('filtered_data');
+            localStorage.removeItem('cache_timestamp');
+            loadData();
+        }
+
+        function applyFilters() {
+            const start_date = document.getElementById('start_date').value;
+            const end_date = document.getElementById('end_date').value;
+            const clientes = Array.from(document.getElementById('clientes').selectedOptions).map(option => option.value);
+            const cache = localStorage.getItem('filtered_data');
+
+            if (cache) {
+                const filteredData = JSON.parse(cache);
+                const filteredDataWithFilters = filteredData.filter(item => {
+                    if (start_date && item.datat0 < start_date) {
+                        return false;
+                    }
+
+                    if (end_date && item.datat0 > end_date) {
+                        return false;
+                    }
+
+                    if (clientes.length > 0 && !clientes.includes(item.cliente)) {
+                        return false;
+                    }
+
+                    return true;
+                });
+
+                totalPages = Math.ceil(filteredDataWithFilters.length / recordsPerPage);
+                displayTableData(filteredDataWithFilters);
+            }
+        }
+
         function reset_filters() {
-            $('input[type="date"]').val('');
-            $('select').val('');
+            document.getElementById('filters-form').reset();
+            loadData();
+        }
+
+        function exportToPDF() {
+            const filename = 'gtf - ' + new Date().toLocaleDateString() + '.pdf';
+            const container = document.getElementById('table-container');
+            // const companyLogoURL = './main-background.jpg';
+            const companyLogoURL = document.querySelector('img').src;
+            const pdfTitle = 'Relatório de Gestão de Moldes';
+            const additionalInfo = 'Data: ' + new Date().toLocaleDateString();
+
+            if (container) {
+                const options = {
+                    margin: [20, 10, 20, 10],
+                    filename: filename,
+                    image: {
+                        type: 'jpeg',
+                        quality: 0.98
+                    },
+                    html2canvas: {
+                        scale: 2
+                    },
+                    jsPDF: {
+                        unit: 'mm',
+                        format: 'a4',
+                        orientation: 'portrait'
+                    }
+                };
+
+                var worker = html2pdf()
+                    .set(options)
+                    .from(container)
+                    .toPdf()
+                    .get('pdf')
+                    .then(function(pdf) {
+                        const totalPages = pdf.internal.getNumberOfPages();
+                        const pageWidth = pdf.internal.pageSize.getWidth();
+                        const pageHeight = pdf.internal.pageSize.getHeight();
+                        const logoWidth = 40;
+                        const logoHeight = 15;
+                        const headerHeight = 30;
+                        const contentStartY = headerHeight + 10;
+
+                        for (let i = 1; i <= totalPages; i++) {
+                            pdf.setPage(i);
+
+                            pdf.addImage(companyLogoURL, 'PNG', 10, 10, logoWidth, logoHeight);
+
+                            pdf.setFontSize(14);
+                            pdf.setTextColor(40);
+                            pdf.text(additionalInfo, pageWidth - 10, 15, {
+                                align: 'right'
+                            });
+
+                            if (i === 1) {
+                                pdf.setFontSize(14);
+                                pdf.setTextColor(40);
+                                pdf.text(pdfTitle, pageWidth / 2, 15, {
+                                    align: 'center'
+                                });
+                            }
+
+                            const pageNumber = `Página ${i} de ${totalPages}`;
+                            pdf.setFontSize(10);
+                            pdf.setTextColor(100);
+                            pdf.text(pageNumber, pageWidth / 2, pageHeight - 10, {
+                                align: 'center'
+                            });
+                        }
+                    }).save(filename);
+            }
         }
     </script>
 </body>
+
 </html>
